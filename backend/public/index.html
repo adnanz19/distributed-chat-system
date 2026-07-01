@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat Terdistribusi - Dummy UI</title>
+</head>
+<body style="font-family: sans-serif; padding: 20px;">
+    <h2>Auth & Chat System</h2>
+    
+    <div id="authPanel" style="margin-bottom: 20px; padding: 10px; border: 1px solid #ccc;">
+        <h3>Login / Register</h3>
+        <input id="username" type="text" placeholder="Username" />
+        <input id="password" type="password" placeholder="Password" />
+        <button onclick="handleAuth('/api/register')">Register</button>
+        <button onclick="handleAuth('/api/login')">Login</button>
+        <p id="authMessage" style="color: red;"></p>
+    </div>
+
+    <div id="chatPanel" style="display: none;">
+        <h3>Obrolan Global <span id="userGreeting" style="color: blue;"></span></h3>
+        <ul id="messages" style="height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;"></ul>
+        <input id="chatInput" type="text" placeholder="Ketik pesan..." style="width: 70%;" />
+        <button onclick="sendMessage()">Kirim</button>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        let socket;
+        let token = "";
+
+        async function handleAuth(endpoint) {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const res = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    if (endpoint === '/api/login') {
+                        token = data.token;
+                        document.getElementById('authPanel').style.display = 'none';
+                        document.getElementById('chatPanel').style.display = 'block';
+                        document.getElementById('userGreeting').innerText = `(Halo, ${data.username})`;
+                        connectSocket();
+                    } else {
+                        document.getElementById('authMessage').innerText = data.message;
+                    }
+                } else {
+                    document.getElementById('authMessage').innerText = data.message;
+                }
+            } catch (error) {
+                console.error("Error API", error);
+            }
+        }
+
+        function connectSocket() {
+            // Sambungkan Socket.io sambil melampirkan Token JWT
+            socket = io({
+                auth: { token: token }
+            });
+
+            socket.on('receive_message', (data) => {
+                const messages = document.getElementById('messages');
+                const li = document.createElement('li');
+                li.innerHTML = `<strong>${data.username}</strong> <em>[Port ${data.server}]</em>: ${data.text}`;
+                messages.appendChild(li);
+                messages.scrollTop = messages.scrollHeight;
+            });
+
+            socket.on('connect_error', (err) => {
+                alert("Koneksi ditolak: " + err.message);
+                location.reload(); // Kembali ke halaman login
+            });
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            if (input.value && socket) {
+                socket.emit('send_message', { text: input.value });
+                input.value = '';
+            }
+        }
+    </script>
+</body>
+</html>
