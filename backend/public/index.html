@@ -2,35 +2,82 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Chat Terdistribusi - Dummy UI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Terdistribusi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
-<body style="font-family: sans-serif; padding: 20px;">
-    <h2>Auth & Chat System</h2>
-    
-    <div id="authPanel" style="margin-bottom: 20px; padding: 10px; border: 1px solid #ccc;">
-        <h3>Login / Register</h3>
-        <input id="username" type="text" placeholder="Username" />
-        <input id="password" type="password" placeholder="Password" />
-        <button onclick="handleAuth('/api/register')">Register</button>
-        <button onclick="handleAuth('/api/login')">Login</button>
-        <p id="authMessage" style="color: red;"></p>
-    </div>
+<body>
 
-    <div id="chatPanel" style="display: none;">
-        <h3>Obrolan Global <span id="userGreeting" style="color: blue;"></span></h3>
-        <ul id="messages" style="height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;"></ul>
-        <input id="chatInput" type="text" placeholder="Ketik pesan..." style="width: 70%;" />
-        <button onclick="sendMessage()">Kirim</button>
+    <div class="container">
+        <div class="header">
+            <h2>Auth & Chat System</h2>
+        </div>
+
+        <div id="authPanel">
+            <h3>Masuk ke Akun</h3>
+            <input id="username" type="text" placeholder="Username" autocomplete="off" />
+            <input id="password" type="password" placeholder="Password" />
+            
+            <div class="btn-group">
+                <button class="btn-outline" onclick="handleAuth('/api/register')">Daftar</button>
+                <button onclick="handleAuth('/api/login')">Login</button>
+            </div>
+            <p id="authMessage"></p>
+        </div>
+
+        <div id="chatPanel">
+            <div class="chat-header">
+                <h3>Obrolan Global</h3>
+                <span id="userGreeting"></span>
+            </div>
+            
+            <ul id="messages"></ul>
+            
+            <div class="chat-input-area">
+                <input id="chatInput" type="text" placeholder="Ketik pesan di sini..." autocomplete="off" onkeypress="handleEnter(event)" />
+                <button onclick="sendMessage()">Kirim</button>
+            </div>
+        </div>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
         let socket;
         let token = "";
+        let currentUser = ""; 
+
+        // Daftar warna untuk username orang lain
+        const userColors = [
+            '#ef4444', // Merah
+            '#f97316', // Oranye
+            '#ca8a04', // Kuning Gelap
+            '#16a34a', // Hijau
+            '#0d9488', // Teal
+            '#2563eb', // Biru
+            '#7c3aed', // Ungu
+            '#db2777', // Pink
+            '#9f1239'  // Merah Marun
+        ];
+
+        // Fungsi untuk menghasilkan warna konsisten berdasarkan string username
+        function getUsernameColor(username) {
+            let hash = 0;
+            for (let i = 0; i < username.length; i++) {
+                hash = username.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            const index = Math.abs(hash) % userColors.length;
+            return userColors[index];
+        }
 
         async function handleAuth(endpoint) {
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
+
+            if(!username || !password) {
+                document.getElementById('authMessage').innerText = "Username dan password harus diisi.";
+                return;
+            }
 
             try {
                 const res = await fetch(endpoint, {
@@ -43,23 +90,27 @@
                 if (data.success) {
                     if (endpoint === '/api/login') {
                         token = data.token;
+                        currentUser = data.username; 
+                        
                         document.getElementById('authPanel').style.display = 'none';
                         document.getElementById('chatPanel').style.display = 'block';
-                        document.getElementById('userGreeting').innerText = `(Halo, ${data.username})`;
+                        document.getElementById('userGreeting').innerText = `Halo, ${data.username}`;
                         connectSocket();
                     } else {
-                        document.getElementById('authMessage').innerText = data.message;
+                        document.getElementById('authMessage').style.color = '#10b981'; 
+                        document.getElementById('authMessage').innerText = data.message || "Registrasi berhasil, silakan login.";
                     }
                 } else {
+                    document.getElementById('authMessage').style.color = 'var(--error-color)';
                     document.getElementById('authMessage').innerText = data.message;
                 }
             } catch (error) {
                 console.error("Error API", error);
+                document.getElementById('authMessage').innerText = "Terjadi kesalahan koneksi.";
             }
         }
 
         function connectSocket() {
-            // Sambungkan Socket.io sambil melampirkan Token JWT
             socket = io({
                 auth: { token: token }
             });
@@ -67,22 +118,51 @@
             socket.on('receive_message', (data) => {
                 const messages = document.getElementById('messages');
                 const li = document.createElement('li');
-                li.innerHTML = `<strong>${data.username}</strong> <em>[Port ${data.server}]</em>: ${data.text}`;
+                
+                const isMyMessage = data.username === currentUser;
+                
+                if (isMyMessage) {
+                    li.classList.add('my-message'); 
+                } else {
+                    li.classList.add('other-message'); 
+                }
+                
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('id-ID', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                });
+                
+                // Jika pesan dari orang lain, beri warna sesuai hash. Jika diri sendiri biarkan kosong (diatur CSS).
+                const nameStyle = isMyMessage ? '' : `style="color: ${getUsernameColor(data.username)};"`;
+
+                li.innerHTML = `
+                    <strong ${nameStyle}>${data.username}</strong> 
+                    <span class="message-text">${data.text}</span>
+                    <span class="time-stamp">${timeString}</span>
+                `;
+                
                 messages.appendChild(li);
                 messages.scrollTop = messages.scrollHeight;
             });
 
             socket.on('connect_error', (err) => {
                 alert("Koneksi ditolak: " + err.message);
-                location.reload(); // Kembali ke halaman login
+                location.reload(); 
             });
         }
 
         function sendMessage() {
             const input = document.getElementById('chatInput');
-            if (input.value && socket) {
+            if (input.value.trim() && socket) {
                 socket.emit('send_message', { text: input.value });
                 input.value = '';
+            }
+        }
+
+        function handleEnter(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
             }
         }
     </script>

@@ -1,0 +1,224 @@
+:root {
+    --primary: #4f46e5;
+    --primary-hover: #4338ca;
+    --bg-color: #f3f4f6;
+    --card-bg: #ffffff;
+    --text-main: #1f2937;
+    --text-muted: #6b7280;
+    --border-color: #e5e7eb;
+    --error-color: #ef4444;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.container {
+    width: 100%;
+    max-width: 450px;
+    background: var(--card-bg);
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.header {
+    background-color: var(--primary);
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+.header h2 {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+/* --- Panel Auth --- */
+#authPanel {
+    padding: 30px 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+#authPanel h3 {
+    margin: 0 0 10px 0;
+    text-align: center;
+    color: var(--text-main);
+}
+
+input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.btn-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 5px;
+}
+
+button {
+    flex: 1;
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+button:hover {
+    background-color: var(--primary-hover);
+}
+
+.btn-outline {
+    background-color: transparent;
+    color: var(--primary);
+    border: 1px solid var(--primary);
+}
+
+.btn-outline:hover {
+    background-color: rgba(79, 70, 229, 0.05);
+}
+
+#authMessage {
+    color: var(--error-color);
+    text-align: center;
+    margin: 5px 0 0 0;
+    font-size: 0.85rem;
+    min-height: 20px;
+}
+
+/* --- Panel Chat --- */
+#chatPanel {
+    display: none;
+    padding: 20px 25px;
+}
+
+.chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+}
+
+.chat-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+#userGreeting {
+    font-size: 0.85rem;
+    color: var(--primary);
+    font-weight: 500;
+}
+
+#messages {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    height: 350px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+#messages::-webkit-scrollbar { width: 6px; }
+#messages::-webkit-scrollbar-track { background: transparent; }
+#messages::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
+
+/* --- Chat Bubbles --- */
+#messages li {
+    padding: 8px 12px;
+    border-radius: 12px;
+    max-width: 85%;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    display: flex;
+    flex-direction: column;
+    min-width: 100px;
+}
+
+/* Pesan orang lain (Kiri) */
+.other-message {
+    background-color: var(--bg-color);
+    align-self: flex-start;
+    border-bottom-left-radius: 2px;
+}
+
+/* Pesan diri sendiri (Kanan) */
+.my-message {
+    background-color: #dcf8c6;
+    align-self: flex-end;
+    border-bottom-right-radius: 2px;
+}
+
+#messages li strong {
+    display: block;
+    color: var(--primary); /* Default warna untuk user lain jika JS gagal */
+    font-size: 0.85rem;
+    margin-bottom: 4px;
+}
+
+.my-message strong {
+    color: #065f46 !important; /* Memaksa pesan sendiri selalu hijau gelap */
+}
+
+/* Styling untuk Jam (Timestamp) */
+.time-stamp {
+    font-size: 0.7rem;
+    text-align: right;
+    margin-top: 4px;
+    margin-bottom: -2px;
+}
+
+/* Warna jam abu-abu standar untuk pesan masuk */
+.other-message .time-stamp {
+    color: #9ca3af;
+}
+
+/* Warna jam hijau gelap untuk pesan keluar */
+.my-message .time-stamp {
+    color: #65a30d;
+}
+
+.chat-input-area {
+    display: flex;
+    gap: 10px;
+}
+
+.chat-input-area button {
+    flex: 0 0 80px;
+}
