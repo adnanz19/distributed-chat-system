@@ -33,6 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById('userGreeting').innerText = `Halo, ${currentUser}`;
         connectSocket(savedToken);
         loadChatHistory();
+        loadUserCount();
     }
 });
 
@@ -76,6 +77,7 @@ async function handleAuth(endpoint) {
                 document.getElementById('userGreeting').innerText = `Halo, ${currentUser}`;
                 connectSocket(data.token);
                 loadChatHistory();
+                loadUserCount();
             } else {
                 authMessage.style.color = '#10b981'; 
                 authMessage.innerText = data.message || "Registrasi berhasil, silakan login.";
@@ -135,8 +137,21 @@ async function loadChatHistory() {
     }
 }
 
-// Fitur Logout (Opsional: tambahkan tombol onclick="logout()" di HTML jika mau)
-function logout() {
+// --- Logout dengan Konfirmasi ---
+function showLogoutConfirm() {
+    document.getElementById('logoutModal').classList.add('active');
+}
+
+function hideLogoutConfirm() {
+    document.getElementById('logoutModal').classList.remove('active');
+}
+
+function confirmLogout() {
+    clearSession();
+}
+
+// Logout paksa (dipakai saat token invalid/expired, tanpa dialog)
+function clearSession() {
     localStorage.removeItem('chatToken');
     localStorage.removeItem('chatUser');
     location.reload();
@@ -174,7 +189,7 @@ function connectSocket(token) {
 
     socket.on('connect_error', (err) => {
         alert("Sesi obrolan bermasalah atau token kedaluwarsa. Silakan login ulang.");
-        logout(); // Hapus sesi jika ditolak server
+        clearSession();
     });
 }
 
@@ -190,8 +205,52 @@ function sendMessage() {
     }
 }
 
+async function loadUserCount() {
+    try {
+        const res = await fetch(BACKEND_URL + '/api/users/count');
+        const data = await res.json();
+        
+        if (data.success) {
+            // Mengubah teks dari "1 Online" menjadi total user terdaftar
+            document.getElementById('onlineCount').innerText = `${data.count} Terdaftar`;
+        }
+    } catch (error) {
+        console.error("Gagal memuat jumlah user:", error);
+    }
+}
+
 function handleEnter(event) {
     if (event.key === 'Enter') {
         sendMessage();
     }
 }
+
+function updateClock() {
+    const now = new Date();
+    const timeEl = document.getElementById("liveClock");
+    const dateEl = document.getElementById("liveDate");
+
+    if (timeEl) {
+        timeEl.textContent = now.toLocaleTimeString("id-ID", { hour12: false });
+    }
+    if (dateEl) {
+        dateEl.textContent = now.toLocaleDateString("id-ID", {
+            weekday: "long",
+            day: "numeric",
+            month: "long",
+        });
+    }
+}
+
+updateClock();
+setInterval(updateClock, 1000);
+
+// --- Interaksi tambahan untuk modal logout ---
+document.addEventListener('click', (e) => {
+    const modal = document.getElementById('logoutModal');
+    if (e.target === modal) hideLogoutConfirm();
+});
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') hideLogoutConfirm();
+});

@@ -1,6 +1,17 @@
 import User from '../models/User.js';
 import jwt from 'jsonwebtoken';
 
+export const getUserCount = async (req, res) => {
+    try {
+        // Menghitung total dokumen yang ada di dalam collection User
+        const count = await User.countDocuments();
+        res.json({ success: true, count: count });
+    } catch (error) {
+        console.error("Gagal menghitung user:", error);
+        res.status(500).json({ success: false, message: "Gagal mengambil data" });
+    }
+};
+
 export const register = async (req, res) => {
     try {
         const { username, password } = req.body;
