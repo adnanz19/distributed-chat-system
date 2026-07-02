@@ -1,171 +1,201 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Chat Terdistribusi</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container" id="mainContainer">
+      <div id="authPanel">
+        <div class="header" style="margin-bottom: 24px; text-align: center">
+          <h2>Auth & Chat System</h2>
+        </div>
+        <h3>Masuk ke Akun</h3>
+        <input
+          id="username"
+          type="text"
+          placeholder="Username"
+          autocomplete="off"
+        />
+        <input id="password" type="password" placeholder="Password" />
 
-    <div class="container">
-        <div class="header">
-            <h2>Auth & Chat System</h2>
+        <div class="btn-group">
+          <button class="btn-outline" onclick="handleAuth('/api/register')">
+            Daftar
+          </button>
+          <button onclick="handleAuth('/api/login')">Login</button>
+        </div>
+        <p id="authMessage"></p>
+      </div>
+
+      <div id="chatPanel" style="display: none" class="bento-layout">
+        <div class="bento-card bento-profile">
+          <div class="profile-avatar">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="32"
+              height="32"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </div>
+          <div>
+            <span style="font-size: 0.85rem; color: #6b7280"
+              >Masuk sebagai</span
+            >
+            <h3
+              id="userGreeting"
+              style="margin: 4px 0 0 0; color: #111827"
+            ></h3>
+          </div>
         </div>
 
-        <div id="authPanel">
-            <h3>Masuk ke Akun</h3>
-            <input id="username" type="text" placeholder="Username" autocomplete="off" />
-            <input id="password" type="password" placeholder="Password" />
-            
-            <div class="btn-group">
-                <button class="btn-outline" onclick="handleAuth('/api/register')">Daftar</button>
-                <button onclick="handleAuth('/api/login')">Login</button>
-            </div>
-            <p id="authMessage"></p>
+        <div class="bento-card bento-clock">
+          <span class="clock-label">Waktu Saat Ini</span>
+          <span class="clock-time" id="liveClock">--:--:--</span>
+          <span class="clock-date" id="liveDate">-</span>
         </div>
 
-        <div id="chatPanel">
-            <div class="chat-header">
-                <h3>Obrolan Global</h3>
-                <span id="userGreeting"></span>
-            </div>
-            
-            <ul id="messages"></ul>
-            
-            <div class="chat-input-area">
-                <input id="chatInput" type="text" placeholder="Ketik pesan di sini..." autocomplete="off" onkeypress="handleEnter(event)" />
-                <button onclick="sendMessage()">Kirim</button>
-            </div>
+        <div class="bento-card bento-logout" onclick="showLogoutConfirm()" title="Keluar">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+          <span style="font-weight: 600">Keluar</span>
         </div>
+
+        <div class="bento-card bento-chat" style="padding: 0; overflow: hidden">
+          <div
+            class="chat-header"
+            style="
+              padding: 20px;
+              border-bottom: 1px solid #e5e7eb;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              background: #fff;
+            "
+          >
+            <h3 style="margin: 0">Obrolan Global</h3>
+            <div class="user-count-badge">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+              <span id="onlineCount">Memuat...</span>
+            </div>
+          </div>
+
+          <ul
+            id="messages"
+            style="
+              flex: 1;
+              padding: 20px;
+              margin: 0;
+              overflow-y: auto;
+              background: #f9fafb;
+            "
+          ></ul>
+
+          <div
+            class="chat-input-area"
+            style="
+              padding: 20px;
+              background: #fff;
+              border-top: 1px solid #e5e7eb;
+            "
+          >
+            <input
+              id="chatInput"
+              type="text"
+              placeholder="Ketik pesan di sini..."
+              autocomplete="off"
+              onkeypress="handleEnter(event)"
+            />
+            <button onclick="sendMessage()">Kirim</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="logoutModal" class="modal-overlay">
+      <div class="modal-box">
+        <div class="modal-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+        </div>
+        <h3>Keluar dari akun?</h3>
+        <p>Kamu perlu login lagi untuk melanjutkan obrolan.</p>
+        <div class="modal-actions">
+          <button class="modal-btn-cancel" onclick="hideLogoutConfirm()">Batal</button>
+          <button class="modal-btn-confirm" onclick="confirmLogout()">Ya, Keluar</button>
+        </div>
+      </div>
     </div>
 
     <script src="https://cdn.socket.io/4.8.3/socket.io.min.js"></script>
+    <script src="script.js"></script>
+
     <script>
-        const BACKEND_URL = "http://localhost:3001"; 
-        let socket;
-        let token = "";
-        let currentUser = ""; 
-
-        // Daftar warna untuk username orang lain
-        const userColors = [
-            '#ef4444', // Merah
-            '#f97316', // Oranye
-            '#ca8a04', // Kuning Gelap
-            '#16a34a', // Hijau
-            '#0d9488', // Teal
-            '#2563eb', // Biru
-            '#7c3aed', // Ungu
-            '#db2777', // Pink
-            '#9f1239'  // Merah Marun
-        ];
-
-        // Fungsi untuk menghasilkan warna konsisten berdasarkan string username
-        function getUsernameColor(username) {
-            let hash = 0;
-            for (let i = 0; i < username.length; i++) {
-                hash = username.charCodeAt(i) + ((hash << 5) - hash);
-            }
-            const index = Math.abs(hash) % userColors.length;
-            return userColors[index];
-        }
-
-        async function handleAuth(endpoint) {
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-
-            if(!username || !password) {
-                document.getElementById('authMessage').innerText = "Username dan password harus diisi.";
-                return;
-            }
-
-            try {
-                const res = await fetch(BACKEND_URL + endpoint, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password })
-                });
-                const data = await res.json();
-                
-                if (data.success) {
-                    if (endpoint === '/api/login') {
-                        token = data.token;
-                        currentUser = data.username; 
-                        
-                        document.getElementById('authPanel').style.display = 'none';
-                        document.getElementById('chatPanel').style.display = 'block';
-                        document.getElementById('userGreeting').innerText = `Halo, ${data.username}`;
-                        connectSocket();
-                    } else {
-                        document.getElementById('authMessage').style.color = '#10b981'; 
-                        document.getElementById('authMessage').innerText = data.message || "Registrasi berhasil, silakan login.";
-                    }
-                } else {
-                    document.getElementById('authMessage').style.color = 'var(--error-color)';
-                    document.getElementById('authMessage').innerText = data.message;
-                }
-            } catch (error) {
-                console.error("Error API", error);
-                document.getElementById('authMessage').innerText = "Terjadi kesalahan koneksi.";
-            }
-        }
-
-        function connectSocket() {
-            socket = io(BACKEND_URL, {
-                auth: { token: token }
-            });
-
-            socket.on('receive_message', (data) => {
-                const messages = document.getElementById('messages');
-                const li = document.createElement('li');
-                
-                const isMyMessage = data.username === currentUser;
-                
-                if (isMyMessage) {
-                    li.classList.add('my-message'); 
-                } else {
-                    li.classList.add('other-message'); 
-                }
-                
-                const now = new Date();
-                const timeString = now.toLocaleTimeString('id-ID', { 
-                    hour: '2-digit', 
-                    minute: '2-digit' 
-                });
-                
-                // Jika pesan dari orang lain, beri warna sesuai hash. Jika diri sendiri biarkan kosong (diatur CSS).
-                const nameStyle = isMyMessage ? '' : `style="color: ${getUsernameColor(data.username)};"`;
-
-                li.innerHTML = `
-                    <strong ${nameStyle}>${data.username}</strong> 
-                    <span class="message-text">${data.text}</span>
-                    <span class="time-stamp">${timeString}</span>
-                `;
-                
-                messages.appendChild(li);
-                messages.scrollTop = messages.scrollHeight;
-            });
-
-            socket.on('connect_error', (err) => {
-                alert("Koneksi ditolak: " + err.message);
-                location.reload(); 
-            });
-        }
-
-        function sendMessage() {
-            const input = document.getElementById('chatInput');
-            if (input.value.trim() && socket) {
-                socket.emit('send_message', { text: input.value });
-                input.value = '';
-            }
-        }
-
-        function handleEnter(event) {
-            if (event.key === 'Enter') {
-                sendMessage();
-            }
-        }
+      // Override fungsi default agar saat panel chat muncul, container utama melebarkan diri
+      const originalDisplay =
+        document.getElementById("chatPanel").style.display;
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          if (
+            mutation.target.style.display === "block" ||
+            mutation.target.style.display === ""
+          ) {
+            mutation.target.classList.add("bento-active");
+            document
+              .getElementById("mainContainer")
+              .classList.add("container-chat-mode");
+          }
+        });
+      });
+      observer.observe(document.getElementById("chatPanel"), {
+        attributes: true,
+        attributeFilter: ["style"],
+      });
     </script>
-</body>
+  </body>
 </html>

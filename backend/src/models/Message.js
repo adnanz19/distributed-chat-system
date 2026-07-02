@@ -10,10 +10,6 @@ const messageSchema = new mongoose.Schema({
         ref : 'User',
         required : true,
     },
-    serverPort : {
-        type : String,
-        default : 'unknown',
-    },
 }, {
     timestamps : true,
 })
