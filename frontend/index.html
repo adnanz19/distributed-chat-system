@@ -41,8 +41,9 @@
         </div>
     </div>
 
-    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.socket.io/4.8.3/socket.io.min.js"></script>
     <script>
+        const BACKEND_URL = "http://localhost:3001"; 
         let socket;
         let token = "";
         let currentUser = ""; 
@@ -80,7 +81,7 @@
             }
 
             try {
-                const res = await fetch(endpoint, {
+                const res = await fetch(BACKEND_URL + endpoint, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username, password })
@@ -111,7 +112,7 @@
         }
 
         function connectSocket() {
-            socket = io({
+            socket = io(BACKEND_URL, {
                 auth: { token: token }
             });
 

@@ -1,4 +1,5 @@
 import "dotenv/config"
+import cors from 'cors';
 
 import connectDB from './src/db.js';
 import { connectRedis } from './src/redis.js';
@@ -15,7 +16,16 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+    cors: {
+        origin: "*", // Mengizinkan semua frontend terhubung
+        methods: ["GET", "POST"]
+    }
+});
+
+app.use(cors()); // 3. Tambahkan baris ini sebelum express.json()
+app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
