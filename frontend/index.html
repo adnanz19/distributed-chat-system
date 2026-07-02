@@ -26,10 +26,19 @@
             <p id="authMessage"></p>
         </div>
 
-        <div id="chatPanel">
-            <div class="chat-header">
+        <div id="chatPanel" style="display: none;">
+            <div class="chat-header" style="display: flex; justify-content: space-between; align-items: center;">
                 <h3>Obrolan Global</h3>
-                <span id="userGreeting"></span>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span id="userGreeting"></span>
+                    <button onclick="logout()" title="Keluar" style="background: transparent; border: none; cursor: pointer; color: #ef4444; padding: 4px; display: flex; align-items: center; justify-content: center; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                    </button>
+                </div>
             </div>
             
             <ul id="messages"></ul>
@@ -42,130 +51,6 @@
     </div>
 
     <script src="https://cdn.socket.io/4.8.3/socket.io.min.js"></script>
-    <script>
-        const BACKEND_URL = "http://localhost:3001"; 
-        let socket;
-        let token = "";
-        let currentUser = ""; 
-
-        // Daftar warna untuk username orang lain
-        const userColors = [
-            '#ef4444', // Merah
-            '#f97316', // Oranye
-            '#ca8a04', // Kuning Gelap
-            '#16a34a', // Hijau
-            '#0d9488', // Teal
-            '#2563eb', // Biru
-            '#7c3aed', // Ungu
-            '#db2777', // Pink
-            '#9f1239'  // Merah Marun
-        ];
-
-        // Fungsi untuk menghasilkan warna konsisten berdasarkan string username
-        function getUsernameColor(username) {
-            let hash = 0;
-            for (let i = 0; i < username.length; i++) {
-                hash = username.charCodeAt(i) + ((hash << 5) - hash);
-            }
-            const index = Math.abs(hash) % userColors.length;
-            return userColors[index];
-        }
-
-        async function handleAuth(endpoint) {
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-
-            if(!username || !password) {
-                document.getElementById('authMessage').innerText = "Username dan password harus diisi.";
-                return;
-            }
-
-            try {
-                const res = await fetch(BACKEND_URL + endpoint, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password })
-                });
-                const data = await res.json();
-                
-                if (data.success) {
-                    if (endpoint === '/api/login') {
-                        token = data.token;
-                        currentUser = data.username; 
-                        
-                        document.getElementById('authPanel').style.display = 'none';
-                        document.getElementById('chatPanel').style.display = 'block';
-                        document.getElementById('userGreeting').innerText = `Halo, ${data.username}`;
-                        connectSocket();
-                    } else {
-                        document.getElementById('authMessage').style.color = '#10b981'; 
-                        document.getElementById('authMessage').innerText = data.message || "Registrasi berhasil, silakan login.";
-                    }
-                } else {
-                    document.getElementById('authMessage').style.color = 'var(--error-color)';
-                    document.getElementById('authMessage').innerText = data.message;
-                }
-            } catch (error) {
-                console.error("Error API", error);
-                document.getElementById('authMessage').innerText = "Terjadi kesalahan koneksi.";
-            }
-        }
-
-        function connectSocket() {
-            socket = io(BACKEND_URL, {
-                auth: { token: token }
-            });
-
-            socket.on('receive_message', (data) => {
-                const messages = document.getElementById('messages');
-                const li = document.createElement('li');
-                
-                const isMyMessage = data.username === currentUser;
-                
-                if (isMyMessage) {
-                    li.classList.add('my-message'); 
-                } else {
-                    li.classList.add('other-message'); 
-                }
-                
-                const now = new Date();
-                const timeString = now.toLocaleTimeString('id-ID', { 
-                    hour: '2-digit', 
-                    minute: '2-digit' 
-                });
-                
-                // Jika pesan dari orang lain, beri warna sesuai hash. Jika diri sendiri biarkan kosong (diatur CSS).
-                const nameStyle = isMyMessage ? '' : `style="color: ${getUsernameColor(data.username)};"`;
-
-                li.innerHTML = `
-                    <strong ${nameStyle}>${data.username}</strong> 
-                    <span class="message-text">${data.text}</span>
-                    <span class="time-stamp">${timeString}</span>
-                `;
-                
-                messages.appendChild(li);
-                messages.scrollTop = messages.scrollHeight;
-            });
-
-            socket.on('connect_error', (err) => {
-                alert("Koneksi ditolak: " + err.message);
-                location.reload(); 
-            });
-        }
-
-        function sendMessage() {
-            const input = document.getElementById('chatInput');
-            if (input.value.trim() && socket) {
-                socket.emit('send_message', { text: input.value });
-                input.value = '';
-            }
-        }
-
-        function handleEnter(event) {
-            if (event.key === 'Enter') {
-                sendMessage();
-            }
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
