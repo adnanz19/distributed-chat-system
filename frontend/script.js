@@ -1,5 +1,5 @@
 // Ganti dengan URL Render nanti saat sudah di-deploy
-const BACKEND_URL = "https://distributed-chat-system-pkoh.onrender.com"; 
+const BACKEND_URL = "https://chat.zaynorang.com";
 let socket;
 let currentUser = ""; 
 
