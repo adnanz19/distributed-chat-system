@@ -13,6 +13,7 @@ export const getMessages = async (req, res) => {
             _id: msg._id,
             text: msg.text,
             // Ambil username dari relasi sender, jika terhapus/kosong beri nilai "Anonim"
+            imageUrl: msg.imageUrl, // Tambahkan baris ini
             username: msg.sender ? msg.sender.username : "Anonim", 
             createdAt: msg.createdAt
         }));

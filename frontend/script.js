@@ -119,11 +119,19 @@ async function loadChatHistory() {
                 
                 const nameStyle = isMyMessage ? '' : `style="color: ${getUsernameColor(data.username)};"`;
 
+                // --- FITUR GAMBAR DITAMBAHKAN DI SINI ---
+                let imageHTML = '';
+                if (data.imageUrl) {
+                    imageHTML = `<br><img src="${data.imageUrl}" style="max-width: 250px; border-radius: 8px; margin-top: 8px; border: 1px solid #e5e7eb;">`;
+                }
+
                 li.innerHTML = `
                     <strong ${nameStyle}>${data.username}</strong> 
                     <span class="message-text"></span>
+                    ${imageHTML}
                     <span class="time-stamp">${timeString}</span>
                 `;
+                // ----------------------------------------
                 
                 li.querySelector('.message-text').textContent = data.text;
                 messages.appendChild(li);
@@ -134,6 +142,36 @@ async function loadChatHistory() {
         }
     } catch (error) {
         console.error("Gagal memuat riwayat obrolan", error);
+    }
+}
+
+async function uploadImage() {
+    const fileInput = document.getElementById('imageInput');
+    const file = fileInput.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+        const res = await fetch(BACKEND_URL + '/api/messages/upload', {
+            method: 'POST',
+            body: formData
+        });
+        const data = await res.json();
+        
+        if (data.imageUrl) {
+            // Minta socket mengirimkan gambar ke obrolan global
+            socket.emit('send_message', { 
+                text: '', 
+                username: currentUser,
+                imageUrl: BACKEND_URL + data.imageUrl 
+            });
+        }
+    } catch (err) {
+        console.error("Gagal mengunggah gambar", err);
+    } finally {
+        fileInput.value = ''; 
     }
 }
 
@@ -173,15 +211,23 @@ function connectSocket(token) {
         const timeString = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
         const nameStyle = isMyMessage ? '' : `style="color: ${getUsernameColor(data.username)};"`;
 
+        // --- FITUR GAMBAR DITAMBAHKAN DI SINI ---
+        let imageHTML = '';
+        if (data.imageUrl) {
+            imageHTML = `<br><img src="${data.imageUrl}" style="max-width: 250px; border-radius: 8px; margin-top: 8px; border: 1px solid #e5e7eb;">`;
+        }
+
         // 3. FITUR ANTI-XSS: Kerangka HTML dipisah dari teks input user
         li.innerHTML = `
             <strong ${nameStyle}>${data.username}</strong> 
             <span class="message-text"></span>
+            ${imageHTML}
             <span class="time-stamp">${timeString}</span>
         `;
+        // ----------------------------------------
         
         // Memasukkan pesan dengan textContent (mengubah script jahat menjadi teks biasa)
-        li.querySelector('.message-text').textContent = data.text;
+        li.querySelector('.message-text').textContent = data.text || '';
         
         messages.appendChild(li);
         messages.scrollTop = messages.scrollHeight;

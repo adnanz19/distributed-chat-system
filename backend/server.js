@@ -11,6 +11,7 @@ import { connectRedis } from './src/redis.js';
 import { setupSocket } from './src/socket.js';
 import authRoutes from './src/routes/authRoutes.js';
 import messageRoutes from './src/routes/messageoutes.js';
+import fs from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -27,6 +28,14 @@ const io = new Server(server, {
 // --- MIDDLEWARE ---
 app.use(cors());
 app.use(express.json());
+
+// Buat folder jika belum ada
+if (!fs.existsSync('uploads')) {
+    fs.mkdirSync('uploads');
+}
+
+// Buka folder uploads agar bisa diakses publik
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // --- ROUTES ---
 app.use('/api', authRoutes);
