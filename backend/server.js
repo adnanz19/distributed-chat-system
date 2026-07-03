@@ -1,15 +1,16 @@
-import "dotenv/config"
+import "dotenv/config";
 import cors from 'cors';
-
-import connectDB from './src/db.js';
-import { connectRedis } from './src/redis.js';
-import { setupSocket } from './src/socket.js';
 import express from 'express';
 import http from 'http';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { Server } from 'socket.io';
+
+import connectDB from './src/db.js';
+import { connectRedis } from './src/redis.js';
+import { setupSocket } from './src/socket.js';
 import authRoutes from './src/routes/authRoutes.js';
+import messageRoutes from './src/routes/messageoutes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -23,28 +24,29 @@ const io = new Server(server, {
     }
 });
 
-app.use(cors()); // 3. Tambahkan baris ini sebelum express.json()
+// --- MIDDLEWARE ---
+app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+// --- ROUTES ---
 app.use('/api', authRoutes);
+app.use('/api/messages', messageRoutes); 
 
-const PORT = process.env.PORT;
+// Fallback port ke 3001 jika process.env.PORT kosong (untuk lokal)
+const PORT = process.env.PORT || 3001;
 
 const startServer = async () => {
     try {
         await connectDB();
         await connectRedis();
         setupSocket(io);
+        
         server.listen(PORT, () => {
             console.log(`Server is running on port ${PORT}`);
         });
     } catch (error) {
-        console.log(error);
+        console.error("Gagal menjalankan server:", error);
     }
 }
 
-startServer();  
-
+startServer();
