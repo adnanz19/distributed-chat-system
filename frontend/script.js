@@ -98,10 +98,21 @@ async function handleAuth(endpoint) {
     }
 }
 
-// Fungsi baru untuk menarik riwayat dari MongoDB
+// --- FUNGSI MENARIK RIWAYAT CHAT (DIPERBARUI DENGAN TOKEN) ---
 async function loadChatHistory() {
     try {
-        const res = await fetch(BACKEND_URL + '/api/messages');
+        // Ambil token dari memori browser
+        const token = localStorage.getItem('chatToken');
+        
+        // Bawa token tersebut di dalam 'headers'
+        const res = await fetch(BACKEND_URL + '/api/messages', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        
         const historyData = await res.json();
         
         const messages = document.getElementById('messages');
@@ -119,7 +130,6 @@ async function loadChatHistory() {
                 
                 const nameStyle = isMyMessage ? '' : `style="color: ${getUsernameColor(data.username)};"`;
 
-                // --- FITUR GAMBAR DITAMBAHKAN DI SINI ---
                 let imageHTML = '';
                 if (data.imageUrl) {
                     imageHTML = `<br><img src="${data.imageUrl}" onclick="openImageModal(this.src)" style="max-width: 250px; border-radius: 8px; margin-top: 8px; border: 1px solid #e5e7eb; cursor: pointer;" title="Klik untuk memperbesar">`;
@@ -131,7 +141,6 @@ async function loadChatHistory() {
                     ${imageHTML}
                     <span class="time-stamp">${timeString}</span>
                 `;
-                // ----------------------------------------
                 
                 li.querySelector('.message-text').textContent = data.text;
                 messages.appendChild(li);
@@ -139,6 +148,8 @@ async function loadChatHistory() {
             
             // Otomatis gulir ke pesan paling bawah
             messages.scrollTop = messages.scrollHeight;
+        } else {
+            console.error("Data riwayat tidak valid:", historyData);
         }
     } catch (error) {
         console.error("Gagal memuat riwayat obrolan", error);
