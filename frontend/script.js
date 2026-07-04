@@ -303,21 +303,16 @@ document.addEventListener('keydown', (e) => {
 
 
 // --- FUNGSI ZOOM GAMBAR + SETUP DOWNLOAD ---
+// --- FUNGSI ZOOM GAMBAR ---
 function openImageModal(imgSrc) {
     const modal = document.getElementById('imageModal');
     const expandedImg = document.getElementById('expandedImg');
-    const downloadBtn = document.getElementById('downloadImgBtn');
     
     // Set sumber gambar untuk tampilan zoom
     expandedImg.src = imgSrc;
     
-    // Set rute unduhan gambar secara dinamis
-    if (downloadBtn) {
-        downloadBtn.href = imgSrc;
-    }
-    
-    // Tampilkan modal
-    modal.style.display = 'block'; 
+    // Tampilkan modal (pastikan ini sesuai dengan CSS Anda, block atau flex)
+    modal.style.display = 'flex'; 
 }
 
 function closeImageModal() {
@@ -327,8 +322,9 @@ function closeImageModal() {
 }
 
 
-// --- FUNGSI UNDUH PAKSA (MENGATASI MASALAH .HTM) ---
+// --- FUNGSI UNDUH PAKSA (MENGATASI MASALAH .HTM & REDIRECT) ---
 async function forceDownload(event) {
+    event.preventDefault();  // KUNCI UTAMA: Mencegah browser pindah halaman (redirect)
     event.stopPropagation(); // Mencegah modal tertutup saat tombol diklik
     
     const imgSrc = document.getElementById('expandedImg').src;
@@ -347,8 +343,7 @@ async function forceDownload(event) {
         a.style.display = 'none';
         a.href = url;
         
-        // Ekstrak nama asli file dari URL (misal: 1700000.jpg), 
-        // Jika gagal, gunakan nama default 'gambar_obrolan.jpg'
+        // Ekstrak nama asli file dari URL, atau gunakan nama default
         const filename = imgSrc.split('/').pop() || 'gambar_obrolan.jpg';
         a.download = filename;
         
