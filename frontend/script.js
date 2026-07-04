@@ -302,15 +302,14 @@ document.addEventListener('keydown', (e) => {
 });
 
 
-// --- FUNGSI ZOOM GAMBAR ---
 function openImageModal(imgSrc) {
     const modal = document.getElementById('imageModal');
     const expandedImg = document.getElementById('expandedImg');
     
-    // Ganti sumber gambar modal dengan gambar yang diklik
     expandedImg.src = imgSrc;
-    // Tampilkan modal
-    modal.style.display = 'block';
+    
+    // Ubah baris ini dari 'block' menjadi 'flex'
+    modal.style.display = 'flex'; 
 }
 
 function closeImageModal() {
