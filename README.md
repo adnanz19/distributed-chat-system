@@ -1,116 +1,151 @@
-# 💬 Final Project Komputasi Paralel dan Terdistribusi
+# 💬 Distributed Chat System
 
-> **Kelompok 1**  
-> Aplikasi Chat Terdistribusi berbasis Web
+> Final Project Mata Kuliah **Komputasi Paralel dan Terdistribusi**  
+> Program Studi Informatika  
+> Universitas Pembangunan Nasional Veteran Jakarta
+
+![Node.js](https://img.shields.io/badge/Node.js-20+-green)
+![Express](https://img.shields.io/badge/Express.js-Backend-black)
+![MongoDB](https://img.shields.io/badge/MongoDB-Database-green)
+![Socket.IO](https://img.shields.io/badge/Socket.IO-Real--Time-white)
+![License](https://img.shields.io/badge/License-Academic-blue)
+
+---
 
 ## 📖 Deskripsi
 
-Aplikasi **Chat Terdistribusi** merupakan aplikasi obrolan **real-time** berbasis web yang dibangun menggunakan arsitektur **client-server terdistribusi**. Proyek ini memisahkan **frontend** yang ringan dengan **backend** yang ditempatkan pada **Virtual Private Server (VPS)** untuk menangani autentikasi, penyimpanan data, serta komunikasi real-time menggunakan WebSocket.
+**Distributed Chat System** merupakan aplikasi chat berbasis web yang menerapkan konsep **client-server terdistribusi**. Sistem memisahkan frontend dan backend sehingga komunikasi real-time dapat dilakukan secara efisien menggunakan **Socket.IO**, sedangkan backend bertanggung jawab terhadap autentikasi pengguna, penyimpanan data, dan pengelolaan pesan.
 
 ---
 
-## ✨ Fitur Utama
+## ✨ Fitur
 
-- 🔐 **Autentikasi Pengguna**
-  - Login dan Register
-  - Penyimpanan akun menggunakan MongoDB
-
-- 💬 **Obrolan Real-Time**
-  - Pengiriman pesan secara instan menggunakan Socket.io
-  - Tidak memerlukan refresh halaman
-
-- 🖼️ **Berbagi Gambar**
-  - Upload gambar melalui tombol
-  - Mendukung fitur **Drag & Drop**
-  - Overlay otomatis ketika file diseret ke halaman chat
-
-- 🔍 **Preview & Download Gambar**
-  - Lightbox bergaya WhatsApp Desktop
-  - Download gambar secara langsung menggunakan Blob Fetching
-
-- 📊 **Informasi Sistem**
-  - Live Clock
-  - Menampilkan jumlah total pengguna yang terdaftar
-
-- 📱 **UI Modern & Responsif**
-  - Bento Grid Layout
-  - Glassmorphism Design
-  - Responsive untuk Desktop maupun Mobile
+- 🔐 Login & Register
+- 💬 Real-Time Chat
+- 🖼 Upload Gambar
+- 📂 Drag & Drop Upload
+- 🔍 Lightbox Preview
+- ⬇ Download Gambar
+- 🕒 Live Clock
+- 👥 Total Registered Users
+- 📱 Responsive Design
+- 🎨 Glassmorphism UI
+- 🧩 Bento Grid Layout
 
 ---
 
-## 🛠️ Teknologi yang Digunakan
+## 🏗 Arsitektur Sistem
+
+```
+                Internet
+                    │
+                    │
+             ┌─────────────┐
+             │   Frontend  │
+             │ HTML/CSS/JS │
+             └──────┬──────┘
+                    │
+             HTTP / WebSocket
+                    │
+          ┌─────────▼─────────┐
+          │   Nginx (VPS)     │
+          │ Reverse Proxy     │
+          └─────────┬─────────┘
+                    │
+             Node.js + Express
+                    │
+          Socket.IO Server
+                    │
+               MongoDB
+```
+
+---
+
+## 🛠 Tech Stack
 
 ### Frontend
 
 - HTML5
 - CSS3
 - Vanilla JavaScript
-- Socket.io Client
+- Socket.IO Client
 
 ### Backend
 
 - Node.js
-- Express.js (REST API)
-- Socket.io
+- Express.js
+- Socket.IO
+- JWT
 - Multer
-- JWT Authentication
 
 ### Database
 
 - MongoDB
 - Mongoose
 
-### Infrastruktur
+### Deployment
 
-- Virtual Private Server (VPS)
-- Nginx
+- VPS
 - PM2
+- Nginx
+
+---
+
+## 📁 Struktur Folder
+
+```
+distributed-chat-system
+│
+├── backend
+│   ├── src
+│   ├── uploads
+│   ├── package.json
+│   └── .env
+│
+├── frontend
+│   ├── index.html
+│   ├── style.css
+│   ├── script.js
+│   └── assets
+│
+└── README.md
+```
 
 ---
 
 # 🚀 Instalasi
 
-## 1. Clone Repository
+## Clone Repository
 
 ```bash
-git clone https://github.com/username/repo-chat-terdistribusi.git
-cd repo-chat-terdistribusi
+git clone https://github.com/adnanz19/distributed-chat-system.git
+cd distributed-chat-system
 ```
 
 ---
 
-## 2. Konfigurasi Backend
-
-Pastikan sudah menginstall:
-
-- Node.js
-- MongoDB
-
-Masuk ke folder backend:
+## Backend
 
 ```bash
 cd backend
 npm install
 ```
 
-Buat file **`.env`**
+Buat file **.env**
 
 ```env
 PORT=3001
 MONGODB_URI=mongodb://localhost:27017/chat_db
-JWT_SECRET=rahasia_super_aman
+JWT_SECRET=your_secret_key
 ```
 
-Jalankan backend:
-
-### Mode Development
+Jalankan server
 
 ```bash
 npm run dev
 ```
 
-### Mode Production (PM2)
+atau
 
 ```bash
 pm2 start src/server.js --name chat-backend
@@ -118,67 +153,38 @@ pm2 start src/server.js --name chat-backend
 
 ---
 
-## 3. Konfigurasi Frontend
+## Frontend
 
-Buka file:
+Buka
 
 ```
 frontend/script.js
 ```
 
-Sesuaikan URL backend.
-
-### Development
+Ubah URL backend
 
 ```javascript
 const BACKEND_URL = "http://localhost:3001";
 ```
 
-### Production
+Lalu jalankan menggunakan Live Server atau deploy ke VPS.
 
-```javascript
-const BACKEND_URL = "https://chat.domainanda.com";
-```
+---
 
-Jalankan frontend menggunakan:
+## 📸 Screenshot
 
-- Live Server (VS Code)
-- Hosting statis (Netlify, Vercel, GitHub Pages)
-- atau letakkan pada folder web server VPS seperti:
+Tambahkan screenshot aplikasi di sini.
+
+Contoh:
 
 ```
-/var/www/
+docs/login.png
+docs/chat.png
 ```
 
 ---
 
-# 📁 Struktur Project
-
-```
-chat-terdistribusi/
-│
-├── backend/
-│   ├── src/
-│   ├── uploads/
-│   ├── .env
-│   ├── package.json
-│   └── ...
-│
-├── frontend/
-│   ├── index.html
-│   ├── style.css
-│   ├── script.js
-│   └── ...
-│
-└── README.md
-```
-
----
-
-# 👥 Pengembang
-
-Proyek ini dikembangkan oleh mahasiswa **Program Studi Informatika**  
-**Universitas Pembangunan Nasional Veteran Jakarta**
+## 👥 Tim Pengembang
 
 | Nama | NIM |
 |------|------|
@@ -186,17 +192,18 @@ Proyek ini dikembangkan oleh mahasiswa **Program Studi Informatika**
 | Nama Anggota 2 | xxxxxxxxxx |
 | Nama Anggota 3 | xxxxxxxxxx |
 | Nama Anggota 4 | xxxxxxxxxx |
+| Nama Anggota 5 | xxxxxxxxxx |
 
 ---
 
-# 📚 Mata Kuliah
+## 🎓 Mata Kuliah
 
 **Komputasi Paralel dan Terdistribusi**
 
+Universitas Pembangunan Nasional Veteran Jakarta
+
 ---
 
-# 📄 Lisensi
+## 📄 Lisensi
 
-Project ini dibuat untuk keperluan akademik sebagai tugas mata kuliah **Komputasi Paralel dan Terdistribusi**.
-
-© Kelompok 1 - Universitas Pembangunan Nasional Veteran Jakarta
+Project ini dibuat untuk keperluan akademik sebagai Final Project mata kuliah **Komputasi Paralel dan Terdistribusi**.
