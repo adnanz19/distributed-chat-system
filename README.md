@@ -172,13 +172,10 @@ Lalu jalankan menggunakan Live Server atau deploy ke VPS.
 ---
 
 ## Screenshot
-
-Tambahkan screenshot aplikasi di sini.
-
-Contoh:
-
+Tampilan awal login
 ```
-docs/login.png
+<img width="1917" height="865" alt="image" src="https://github.com/user-attachments/assets/014ff021-ba76-49ab-93ca-4a2b62d0f76e" />
+
 docs/chat.png
 ```
 
