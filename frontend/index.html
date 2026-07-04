@@ -211,7 +211,7 @@
     </script>
     
     <div id="imageModal" onclick="closeImageModal()" style="display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100vw; height: 100vh; background-color: rgba(0, 0, 0, 0.85);">
-        <a id="downloadImgBtn" download href="#" onclick="event.stopPropagation()" style="position: absolute; top: 32px; right: 90px; color: #f1f1f1; cursor: pointer; z-index: 10000; text-decoration: none; transition: 0.2s;" title="Unduh Gambar">
+        <a id="downloadImgBtn" onclick="forceDownload(event)" style="position: absolute; top: 32px; right: 90px; color: #f1f1f1; cursor: pointer; z-index: 10000; text-decoration: none; transition: 0.2s;" title="Unduh Gambar">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                 <polyline points="7 10 12 15 17 10"></polyline>

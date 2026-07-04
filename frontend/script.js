@@ -325,3 +325,41 @@ function closeImageModal() {
     // Sembunyikan modal
     modal.style.display = 'none';
 }
+
+
+// --- FUNGSI UNDUH PAKSA (MENGATASI MASALAH .HTM) ---
+async function forceDownload(event) {
+    event.stopPropagation(); // Mencegah modal tertutup saat tombol diklik
+    
+    const imgSrc = document.getElementById('expandedImg').src;
+    if (!imgSrc) return;
+
+    try {
+        // 1. Ambil data mentah gambar dari server (Blob)
+        const response = await fetch(imgSrc);
+        const blob = await response.blob();
+        
+        // 2. Buat URL lokal sementara di dalam memori browser
+        const url = window.URL.createObjectURL(blob);
+        
+        // 3. Buat elemen link "siluman" untuk memicu unduhan
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        
+        // Ekstrak nama asli file dari URL (misal: 1700000.jpg), 
+        // Jika gagal, gunakan nama default 'gambar_obrolan.jpg'
+        const filename = imgSrc.split('/').pop() || 'gambar_obrolan.jpg';
+        a.download = filename;
+        
+        // 4. Klik link siluman tersebut lalu hancurkan
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+        
+    } catch (error) {
+        console.error("Gagal mengunduh gambar", error);
+        alert("Terjadi kesalahan saat mengunduh gambar.");
+    }
+}
