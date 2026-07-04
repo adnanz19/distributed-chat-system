@@ -184,19 +184,19 @@ docs/chat.png
 
 ---
 
-## 👥 Tim Pengembang
+## Tim Pengembang
 
 | Nama | NIM |
 |------|------|
 | Ahmad Zayn Usman | 2310511001 |
-| Nama Anggota 2 | xxxxxxxxxx |
-| Nama Anggota 3 | xxxxxxxxxx |
-| Nama Anggota 4 | xxxxxxxxxx |
-| Nama Anggota 5 | xxxxxxxxxx |
+| Fandi Yakub |  2310511005 |
+| Fauzio Yunus Alim | 2310511020 |
+| Muhammad Hanif | 2310511038 |
+| Bima Adnandita  | 2310511039|
 
 ---
 
-## 🎓 Mata Kuliah
+## Mata Kuliah
 
 **Komputasi Paralel dan Terdistribusi**
 
