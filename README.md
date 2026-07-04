@@ -20,17 +20,17 @@
 
 ## Fitur
 
-- 🔐 Login & Register
-- 💬 Real-Time Chat
-- 🖼 Upload Gambar
-- 📂 Drag & Drop Upload
-- 🔍 Lightbox Preview
+- Login & Register
+- Real-Time Chat
+- Upload Gambar
+- Drag & Drop Upload
+- Lightbox Preview
 - ⬇ Download Gambar
-- 🕒 Live Clock
-- 👥 Total Registered Users
-- 📱 Responsive Design
-- 🎨 Glassmorphism UI
-- 🧩 Bento Grid Layout
+- Live Clock
+- Total Registered Users
+- Responsive Design
+- Glassmorphism UI
+- Bento Grid Layout
 
 ---
 
@@ -113,7 +113,7 @@ distributed-chat-system
 
 ---
 
-# 🚀 Instalasi
+# Instalasi
 
 ## Clone Repository
 
@@ -171,7 +171,7 @@ Lalu jalankan menggunakan Live Server atau deploy ke VPS.
 
 ---
 
-## 📸 Screenshot
+## Screenshot
 
 Tambahkan screenshot aplikasi di sini.
 
