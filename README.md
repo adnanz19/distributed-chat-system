@@ -25,7 +25,7 @@
 - Upload Gambar
 - Drag & Drop Upload
 - Lightbox Preview
-- ⬇ Download Gambar
+- Download Gambar
 - Live Clock
 - Total Registered Users
 - Responsive Design
@@ -204,6 +204,6 @@ Universitas Pembangunan Nasional Veteran Jakarta
 
 ---
 
-## 📄 Lisensi
+## Lisensi
 
 Project ini dibuat untuk keperluan akademik sebagai Final Project mata kuliah **Komputasi Paralel dan Terdistribusi**.
