@@ -172,12 +172,9 @@ Lalu jalankan menggunakan Live Server atau deploy ke VPS.
 ---
 
 ## Screenshot
-Tampilan awal login
-```
-<img width="1917" height="865" alt="image" src="https://github.com/user-attachments/assets/014ff021-ba76-49ab-93ca-4a2b62d0f76e" />
+**Tampilan awal login**
+<img width="1917" height="865" alt="Screenshot 2026-07-04 222415" src="https://github.com/user-attachments/assets/82384ba4-1420-403e-af1b-25796b5252ec" />
 
-docs/chat.png
-```
 
 ---
 
