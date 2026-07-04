@@ -9,7 +9,7 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="style.css?v=2" />
+    <link rel="stylesheet" href="style.css?v=3" />
   </head>
   <body>
     <div class="container" id="mainContainer">
@@ -36,6 +36,9 @@
       </div>
 
       <div id="chatPanel" style="display: none" class="bento-layout">
+        <div class="drag-overlay">
+            <span>Drag file here</span>
+        </div>
         <div class="bento-card bento-profile">
           <div class="profile-avatar">
             <svg
@@ -185,7 +188,7 @@
     </div>
 
     <script src="https://cdn.socket.io/4.8.3/socket.io.min.js"></script>
-    <script src="script.js?v=5"></script>
+    <script src="script.js?v=6"></script>
 
     <script>
       // Override fungsi default agar saat panel chat muncul, container utama melebarkan diri

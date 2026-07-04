@@ -620,9 +620,32 @@ button:hover {
 
 }
 
-/* --- GAYA UNTUK DRAG AND DROP --- */
-.drag-active {
-    border: 3px dashed #3b82f6 !important; 
-    background-color: rgba(59, 130, 246, 0.1) !important; 
-    transition: all 0.2s ease-in-out;
+
+/* --- GAYA BARU DRAG AND DROP (GELAP & ELEGAN) --- */
+
+#chatPanel {
+    position: relative; 
+}
+
+.drag-overlay {
+    display: none; /* Sembunyikan secara default */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.75); /* Latar hitam transparan */
+    color: #ffffff; 
+    font-size: 28px;
+    font-weight: bold;
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    border-radius: inherit; 
+    pointer-events: none; /* Mencegah kedip kursor */
+}
+
+/* Saat panel chat sedang diseret gambar, tampilkan lapisan gelapnya */
+#chatPanel.drag-active .drag-overlay {
+    display: flex;
 }
