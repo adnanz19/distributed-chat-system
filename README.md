@@ -154,15 +154,19 @@ Lalu jalankan menggunakan Live Server atau deploy ke VPS.
 ---
 
 ## Screenshot
-**Tampilan awal login**
+**Tampilan Awal Login**
 <img width="1917" height="865" alt="Screenshot 2026-07-04 222415" src="https://github.com/user-attachments/assets/82384ba4-1420-403e-af1b-25796b5252ec" />
 
-**Tampilan chat awal**
+**Tampilan Setelah Daftar dan Login Akun**
+<img width="1917" height="865" alt="Screenshot 2026-07-04 222415" src="https://github.com/user-attachments/assets/1533a370-ebf3-4f38-acdc-3417e30dd3d4" />
+
+**Tampilan Chat Awal**
 <img width="1917" height="867" alt="Screenshot 2026-07-04 224534" src="https://github.com/user-attachments/assets/caca33db-7905-4bd0-8b68-eb504d13a801" />
 
-**Tes chat global**
+**Tes Chat Global**
 <img width="1917" height="867" alt="Screenshot 2026-07-04 224127" src="https://github.com/user-attachments/assets/106cdf32-af76-4dee-87dc-bd5ace20adb5" />
 
+**Tes Upload Gambar**
 
 ---
 
