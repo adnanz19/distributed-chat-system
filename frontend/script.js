@@ -370,3 +370,75 @@ async function forceDownload(event) {
         alert("Terjadi kesalahan saat mengunduh gambar.");
     }
 }
+
+// --- FITUR DRAG AND DROP GAMBAR ---
+document.addEventListener("DOMContentLoaded", () => {
+    const chatPanel = document.getElementById('chatPanel');
+
+    // 1. Mencegat sifat bawaan browser agar tidak membuka gambar di tab baru
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        chatPanel.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    // 2. Menambahkan efek visual saat gambar diseret masuk
+    ['dragenter', 'dragover'].forEach(eventName => {
+        chatPanel.addEventListener(eventName, () => {
+            chatPanel.classList.add('drag-active');
+        }, false);
+    });
+
+    // 3. Menghapus efek visual saat gambar diseret keluar atau dilepas
+    ['dragleave', 'drop'].forEach(eventName => {
+        chatPanel.addEventListener(eventName, () => {
+            chatPanel.classList.remove('drag-active');
+        }, false);
+    });
+
+    // 4. Menangkap gambar yang dilepas dan langsung mengunggahnya
+    chatPanel.addEventListener('drop', handleDrop, false);
+
+    async function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+
+        if (files && files.length > 0) {
+            const file = files[0];
+            
+            // Validasi: Pastikan yang diseret adalah file gambar
+            if (!file.type.startsWith('image/')) {
+                alert('Tolong seret dan lepas file gambar saja (JPG/PNG/GIF).');
+                return;
+            }
+
+            // Membungkus file dalam format yang dikenali server (seperti form-data)
+            const formData = new FormData();
+            formData.append('image', file);
+
+            try {
+                // Mengirim ke API Upload Anda yang sudah ada
+                const res = await fetch(BACKEND_URL + '/api/messages/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                
+                if (data.imageUrl) {
+                    // Minta socket mengirimkan gambar ke obrolan global
+                    socket.emit('send_message', { 
+                        text: '', 
+                        username: currentUser,
+                        imageUrl: BACKEND_URL + data.imageUrl 
+                    });
+                }
+            } catch (err) {
+                console.error("Gagal mengunggah gambar dari drag & drop", err);
+                alert("Gagal mengirim gambar. Periksa koneksi ke server.");
+            }
+        }
+    }
+});

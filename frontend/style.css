@@ -618,6 +618,11 @@ button:hover {
     to {transform: scale(1); opacity: 1;}
 }
 
+}
 
-
+/* --- GAYA UNTUK DRAG AND DROP --- */
+.drag-active {
+    border: 3px dashed #3b82f6 !important; /* Garis putus-putus biru */
+    background-color: rgba(59, 130, 246, 0.1) !important; /* Latar biru transparan */
+    transition: all 0.2s ease-in-out;
 }
