@@ -122,7 +122,7 @@ async function loadChatHistory() {
                 // --- FITUR GAMBAR DITAMBAHKAN DI SINI ---
                 let imageHTML = '';
                 if (data.imageUrl) {
-                    imageHTML = `<br><img src="${data.imageUrl}" style="max-width: 250px; border-radius: 8px; margin-top: 8px; border: 1px solid #e5e7eb;">`;
+                    imageHTML = `<br><img src="${data.imageUrl}" onclick="openImageModal(this.src)" style="max-width: 250px; border-radius: 8px; margin-top: 8px; border: 1px solid #e5e7eb; cursor: pointer;" title="Klik untuk memperbesar">`;
                 }
 
                 li.innerHTML = `
@@ -214,7 +214,7 @@ function connectSocket(token) {
         // --- FITUR GAMBAR DITAMBAHKAN DI SINI ---
         let imageHTML = '';
         if (data.imageUrl) {
-            imageHTML = `<br><img src="${data.imageUrl}" style="max-width: 250px; border-radius: 8px; margin-top: 8px; border: 1px solid #e5e7eb;">`;
+            imageHTML = `<br><img src="${data.imageUrl}" onclick="openImageModal(this.src)" style="max-width: 250px; border-radius: 8px; margin-top: 8px; border: 1px solid #e5e7eb; cursor: pointer;" title="Klik untuk memperbesar">`;
         }
 
         // 3. FITUR ANTI-XSS: Kerangka HTML dipisah dari teks input user
@@ -300,3 +300,21 @@ document.addEventListener('click', (e) => {
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') hideLogoutConfirm();
 });
+
+
+// --- FUNGSI ZOOM GAMBAR ---
+function openImageModal(imgSrc) {
+    const modal = document.getElementById('imageModal');
+    const expandedImg = document.getElementById('expandedImg');
+    
+    // Ganti sumber gambar modal dengan gambar yang diklik
+    expandedImg.src = imgSrc;
+    // Tampilkan modal
+    modal.style.display = 'block';
+}
+
+function closeImageModal() {
+    const modal = document.getElementById('imageModal');
+    // Sembunyikan modal
+    modal.style.display = 'none';
+}

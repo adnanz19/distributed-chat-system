@@ -570,4 +570,51 @@ button:hover {
     .header h2 {
         font-size: 1.2rem;
     }
+    
+/* --- GAYA UNTUK ZOOM GAMBAR (LIGHTBOX) --- */
+.modal-lightbox {
+    display: none; /* Disembunyikan secara default */
+    position: fixed; 
+    z-index: 9999; /* Memastikan berada di lapisan paling atas */
+    padding-top: 60px; 
+    left: 0; 
+    top: 0; 
+    width: 100%; 
+    height: 100%; 
+    background-color: rgba(0, 0, 0, 0.85); /* Latar belakang hitam transparan */
+    text-align: center;
+}
+
+.modal-content-lightbox {
+    margin: auto;
+    display: block;
+    max-width: 90%;
+    max-height: 85vh; /* Menyesuaikan dengan tinggi layar */
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    animation: zoomIn 0.3s ease; /* Animasi membesar yang halus */
+}
+
+.close-lightbox {
+    position: absolute;
+    top: 20px;
+    right: 40px;
+    color: #f1f1f1;
+    font-size: 45px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.close-lightbox:hover {
+    color: #bbb;
+}
+
+@keyframes zoomIn {
+    from {transform: scale(0.7); opacity: 0;}
+    to {transform: scale(1); opacity: 1;}
+}
+
+
+
 }
