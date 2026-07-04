@@ -302,14 +302,22 @@ document.addEventListener('keydown', (e) => {
 });
 
 
+// --- FUNGSI ZOOM GAMBAR + SETUP DOWNLOAD ---
 function openImageModal(imgSrc) {
     const modal = document.getElementById('imageModal');
     const expandedImg = document.getElementById('expandedImg');
+    const downloadBtn = document.getElementById('downloadImgBtn');
     
+    // Set sumber gambar untuk tampilan zoom
     expandedImg.src = imgSrc;
     
-    // Ubah baris ini dari 'block' menjadi 'flex'
-    modal.style.display = 'flex'; 
+    // Set rute unduhan gambar secara dinamis
+    if (downloadBtn) {
+        downloadBtn.href = imgSrc;
+    }
+    
+    // Tampilkan modal
+    modal.style.display = 'block'; 
 }
 
 function closeImageModal() {

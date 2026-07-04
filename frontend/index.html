@@ -211,7 +211,14 @@
     </script>
     
     <div id="imageModal" onclick="closeImageModal()" style="display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100vw; height: 100vh; background-color: rgba(0, 0, 0, 0.85);">
-        <span style="position: absolute; top: 20px; right: 40px; color: #f1f1f1; font-size: 45px; font-weight: bold; cursor: pointer; text-shadow: 0 2px 4px rgba(0,0,0,0.5); z-index: 10000;">&times;</span>
+        <a id="downloadImgBtn" download href="#" onclick="event.stopPropagation()" style="position: absolute; top: 32px; right: 90px; color: #f1f1f1; cursor: pointer; z-index: 10000; text-decoration: none; transition: 0.2s;" title="Unduh Gambar">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+        </a>
+        <span style="position: absolute; top: 20px; right: 40px; color: #f1f1f1; font-size: 45px; font-weight: bold; cursor: pointer; text-shadow: 0 2px 4px rgba(0,0,0,0.5); z-index: 10000; line-height: 1;">&times;</span>
         <img id="expandedImg" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); max-width: 90vw !important; max-height: 90vh !important; object-fit: contain !important; width: auto; height: auto; border-radius: 8px; box-shadow: 0 4px 25px rgba(0,0,0,0.8);">
     </div>
     
