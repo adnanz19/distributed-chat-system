@@ -165,7 +165,7 @@ Lalu jalankan menggunakan Live Server atau deploy ke VPS.
 <img width="1917" height="867" alt="Screenshot 2026-07-04 224127" src="https://github.com/user-attachments/assets/106cdf32-af76-4dee-87dc-bd5ace20adb5" />
 
 **Tes Upload Gambar**
-<img width="1917" height="867" alt="Screenshot 2026-07-04 230050" src="https://github.com/user-attachments/assets/a0d020b1-9bb3-45c3-a60c-a836fb0ab74b" />
+<img width="1917" height="867" alt="Screenshot 2026-07-04 230050" src="https://github.com/user-attachments/assets/d754c8ae-5bdb-49b0-9541-d41fe39cf77b" />
 
 ---
 
