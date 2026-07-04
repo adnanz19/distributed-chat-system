@@ -1,4 +1,4 @@
-# 💬 Distributed Chat System
+# Distributed Chat System
 
 > Final Project Mata Kuliah **Komputasi Paralel dan Terdistribusi**  
 > Program Studi Informatika  
@@ -12,13 +12,13 @@
 
 ---
 
-## 📖 Deskripsi
+## Deskripsi
 
 **Distributed Chat System** merupakan aplikasi chat berbasis web yang menerapkan konsep **client-server terdistribusi**. Sistem memisahkan frontend dan backend sehingga komunikasi real-time dapat dilakukan secara efisien menggunakan **Socket.IO**, sedangkan backend bertanggung jawab terhadap autentikasi pengguna, penyimpanan data, dan pengelolaan pesan.
 
 ---
 
-## ✨ Fitur
+## Fitur
 
 - 🔐 Login & Register
 - 💬 Real-Time Chat
@@ -34,7 +34,7 @@
 
 ---
 
-## 🏗 Arsitektur Sistem
+## Arsitektur Sistem
 
 ```
                 Internet
@@ -61,7 +61,7 @@
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 ### Frontend
 
@@ -91,7 +91,7 @@
 
 ---
 
-## 📁 Struktur Folder
+## Struktur Folder
 
 ```
 distributed-chat-system
