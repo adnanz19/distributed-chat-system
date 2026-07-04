@@ -571,28 +571,31 @@ button:hover {
         font-size: 1.2rem;
     }
     
-/* --- GAYA UNTUK ZOOM GAMBAR (LIGHTBOX) --- */
+/* --- GAYA BARU UNTUK ZOOM GAMBAR --- */
 .modal-lightbox {
-    display: none; /* Disembunyikan secara default */
+    display: none; /* Akan diubah menjadi flex oleh JavaScript */
     position: fixed; 
-    z-index: 9999; /* Memastikan berada di lapisan paling atas */
-    padding-top: 60px; 
+    z-index: 9999; 
     left: 0; 
     top: 0; 
-    width: 100%; 
-    height: 100%; 
-    background-color: rgba(0, 0, 0, 0.85); /* Latar belakang hitam transparan */
-    text-align: center;
+    width: 100vw; 
+    height: 100vh; 
+    background-color: rgba(0, 0, 0, 0.85); 
+    
+    /* Menggunakan Flexbox agar gambar selalu terkunci tepat di tengah */
+    align-items: center; 
+    justify-content: center;
 }
 
 .modal-content-lightbox {
-    margin: auto;
-    display: block;
-    max-width: 90%;
-    max-height: 85vh; /* Menyesuaikan dengan tinggi layar */
+    max-width: 90vw;  /* Gambar maksimal selebar 90% layar */
+    max-height: 90vh; /* Gambar maksimal setinggi 90% layar */
+    width: auto;
+    height: auto;
+    object-fit: contain; /* KUNCI UTAMA: Memaksa gambar menyesuaikan diri tanpa terpotong/gepeng */
     border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-    animation: zoomIn 0.3s ease; /* Animasi membesar yang halus */
+    box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+    animation: zoomIn 0.3s ease;
 }
 
 .close-lightbox {
@@ -615,6 +618,34 @@ button:hover {
     to {transform: scale(1); opacity: 1;}
 }
 
+}
 
 
+/* --- GAYA BARU DRAG AND DROP (GELAP & ELEGAN) --- */
+
+#chatPanel {
+    position: relative; 
+}
+
+.drag-overlay {
+    display: none; /* Sembunyikan secara default */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.75); /* Latar hitam transparan */
+    color: #ffffff; 
+    font-size: 28px;
+    font-weight: bold;
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    border-radius: inherit; 
+    pointer-events: none; /* Mencegah kedip kursor */
+}
+
+/* Saat panel chat sedang diseret gambar, tampilkan lapisan gelapnya */
+#chatPanel.drag-active .drag-overlay {
+    display: flex;
 }
