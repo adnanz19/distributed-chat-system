@@ -158,7 +158,7 @@ Lalu jalankan menggunakan Live Server atau deploy ke VPS.
 <img width="1917" height="865" alt="Screenshot 2026-07-04 222415" src="https://github.com/user-attachments/assets/82384ba4-1420-403e-af1b-25796b5252ec" />
 
 **Tampilan Setelah Daftar dan Login Akun**
-<img width="1917" height="865" alt="Screenshot 2026-07-04 222415" src="https://github.com/user-attachments/assets/1533a370-ebf3-4f38-acdc-3417e30dd3d4" />
+<img width="1917" height="867" alt="Screenshot 2026-07-04 224007" src="https://github.com/user-attachments/assets/c8d65083-ef5d-4563-a9f0-0cb3b536313a" />
 
 **Tampilan Chat Awal**
 <img width="1917" height="867" alt="Screenshot 2026-07-04 224534" src="https://github.com/user-attachments/assets/caca33db-7905-4bd0-8b68-eb504d13a801" />
@@ -167,6 +167,7 @@ Lalu jalankan menggunakan Live Server atau deploy ke VPS.
 <img width="1917" height="867" alt="Screenshot 2026-07-04 224127" src="https://github.com/user-attachments/assets/106cdf32-af76-4dee-87dc-bd5ace20adb5" />
 
 **Tes Upload Gambar**
+
 
 ---
 
