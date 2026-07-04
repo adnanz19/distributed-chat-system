@@ -175,6 +175,8 @@ Lalu jalankan menggunakan Live Server atau deploy ke VPS.
 **Tampilan awal login**
 <img width="1917" height="865" alt="Screenshot 2026-07-04 222415" src="https://github.com/user-attachments/assets/82384ba4-1420-403e-af1b-25796b5252ec" />
 
+**Tampilan chat**
+<img width="1917" height="867" alt="Screenshot 2026-07-04 223240" src="https://github.com/user-attachments/assets/cbaa8b4e-3976-4fde-8536-139e4ee3aa06" />
 
 ---
 
