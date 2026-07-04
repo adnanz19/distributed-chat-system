@@ -37,26 +37,8 @@
 ## Arsitektur Sistem
 
 ```
-                Internet
-                    │
-                    │
-             ┌─────────────┐
-             │   Frontend  │
-             │ HTML/CSS/JS │
-             └──────┬──────┘
-                    │
-             HTTP / WebSocket
-                    │
-          ┌─────────▼─────────┐
-          │   Nginx (VPS)     │
-          │ Reverse Proxy     │
-          └─────────┬─────────┘
-                    │
-             Node.js + Express
-                    │
-          Socket.IO Server
-                    │
-               MongoDB
+<img width="313" height="715" alt="architecture png" src="https://github.com/user-attachments/assets/597f0209-0e2e-444c-a307-0c44d4fa71f3" />
+
 ```
 
 ---
