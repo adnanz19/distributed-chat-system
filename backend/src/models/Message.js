@@ -3,16 +3,16 @@ import mongoose from 'mongoose';
 const messageSchema = new mongoose.Schema({
     text : {
         type : String,
-        required : true,
+        default : "", // Tidak lagi required
+    },
+    imageUrl: {
+        type : String,
+        default: null, // Menyimpan tautan gambar
     },
     sender : {
         type : mongoose.Schema.Types.ObjectId,
         ref : 'User',
         required : true,
-    },
-    serverPort : {
-        type : String,
-        default : 'unknown',
     },
 }, {
     timestamps : true,

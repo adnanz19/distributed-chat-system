@@ -1,7 +1,7 @@
 import { pubClient, subClient } from './redis.js';
 import { verifySocketToken } from './middleware/authMiddleware.js';
 import Message from './models/Message.js';
-import User from './models/User.js'; // 🚨 Tambahan baru: Panggil model User
+import User from './models/User.js';
 
 export const setupSocket = (io) => {
     io.use(verifySocketToken);
@@ -23,16 +23,20 @@ export const setupSocket = (io) => {
                     return;
                 }
 
+                // 1. Simpan gambar ke MongoDB
                 const newMessage = new Message({
                     sender: userValid._id, 
                     text: data.text,
+                    imageUrl: data.imageUrl, // <--- TAMBAHAN UNTUK GAMBAR
                     serverPort: process.env.PORT || 3001
                 });
                 await newMessage.save();
 
+                // 2. Kirim gambar ke Redis untuk disiarkan ke semua layar
                 const payload = {
                     username: socket.user.username,
                     text: data.text,
+                    imageUrl: data.imageUrl, // <--- TAMBAHAN UNTUK GAMBAR
                     server: process.env.PORT || 3001,
                     timestamp: newMessage.createdAt
                 };
