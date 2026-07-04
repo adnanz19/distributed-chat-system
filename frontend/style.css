@@ -622,7 +622,7 @@ button:hover {
 
 /* --- GAYA UNTUK DRAG AND DROP --- */
 .drag-active {
-    border: 3px dashed #3b82f6 !important; /* Garis putus-putus biru */
-    background-color: rgba(59, 130, 246, 0.1) !important; /* Latar biru transparan */
+    border: 3px dashed #3b82f6 !important; 
+    background-color: rgba(59, 130, 246, 0.1) !important; 
     transition: all 0.2s ease-in-out;
 }
