@@ -37,7 +37,7 @@
 ## Arsitektur Sistem
 
 ```
-<img width="313" height="715" alt="architecture png" src="https://github.com/user-attachments/assets/597f0209-0e2e-444c-a307-0c44d4fa71f3" />
+<img width="313" height="715" alt="architecture png" src="https://github.com/user-attachments/assets/dcdc6263-6394-4ac5-9ff8-bc824d46aef5" />
 
 ```
 
