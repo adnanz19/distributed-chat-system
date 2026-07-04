@@ -110,7 +110,8 @@ async function loadChatHistory() {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
-            }
+            },
+            cache: 'no-store'
         });
         
         const historyData = await res.json();
