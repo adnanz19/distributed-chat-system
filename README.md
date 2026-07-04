@@ -108,7 +108,7 @@ cd distributed-chat-system
 
 ```bash
 cd backend
-npm install
+pnpm install
 ```
 
 Buat file **.env**
@@ -122,7 +122,7 @@ JWT_SECRET=your_secret_key
 Jalankan server
 
 ```bash
-npm run dev
+pnpm run dev
 ```
 
 atau
