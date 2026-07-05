@@ -495,14 +495,23 @@ async function simpanProfilBaru() {
         const hasil = await respons.json();
         if (hasil.success) {
             
-            // 3. PENTING: Jika nama berhasil diubah, update juga nama di Local Storage!
+            // Update nama di Local Storage dan layar kiri
             if (inputNama) {
                 localStorage.setItem("chatUser", inputNama);
-                
-                // (Opsional) Update sapaan di pojok kiri atas layar
                 const greeting = document.getElementById("userGreeting");
-                if (greeting) greeting.innerText = inputNama;
+                // Perhatikan penambahan kata "Halo, " agar formatnya sama dengan sebelumnya
+                if (greeting) greeting.innerText = "Halo, " + inputNama; 
             }
+            
+            // === TAMBAHKAN BLOK KODE INI ===
+            // Ganti ikon SVG di sidebar kiri dengan foto yang baru diupload
+            if (hasil.user.profilePic) {
+                const kotakAvatar = document.querySelector(".profile-avatar");
+                if (kotakAvatar) {
+                    kotakAvatar.innerHTML = `<img src="${hasil.user.profilePic}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+                }
+            }
+            // ===============================
             
             alert("Profil berhasil diperbarui!");
             tutupModalProfil();
@@ -523,15 +532,28 @@ async function simpanProfilBaru() {
 // ==========================================
 
 socket.on("user_profile_updated", (dataBaru) => {
-    // Ubah semua foto avatar milik user ini yang ada di layar
+    // 1. Ubah avatar di balon chat (Kode Anda yang sudah ada)
     const semuaAvatar = document.querySelectorAll(`.avatar-user-${dataBaru.userId}`);
     semuaAvatar.forEach(img => {
         img.src = dataBaru.profilePic;
     });
 
-    // Ubah semua nama milik user ini yang ada di layar
     const semuaNama = document.querySelectorAll(`.nama-user-${dataBaru.userId}`);
     semuaNama.forEach(span => {
         span.innerText = dataBaru.username;
     });
+
+    // === TAMBAHKAN BLOK KODE INI ===
+    // 2. Jika yang update profil adalah akun kita sendiri, ganti juga foto di sidebar kiri
+    const namaSayaSaatIni = localStorage.getItem("chatUser");
+    if (dataBaru.username === namaSayaSaatIni) {
+        const kotakAvatar = document.querySelector(".profile-avatar");
+        if (kotakAvatar) {
+            kotakAvatar.innerHTML = `<img src="${dataBaru.profilePic}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+        }
+        
+        const greeting = document.getElementById("userGreeting");
+        if (greeting) greeting.innerText = "Halo, " + dataBaru.username;
+    }
+    // ===============================
 });
