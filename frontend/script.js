@@ -462,19 +462,25 @@ function tutupModalProfil() {
     document.getElementById("modal-profil").style.display = "none";
 }
 
-// Fungsi mengirim data ke server
 async function simpanProfilBaru() {
     const tombolSimpan = document.querySelector(".btn-save");
     tombolSimpan.innerText = "Menyimpan...";
     tombolSimpan.disabled = true;
 
-    // Asumsi 'currentUser._id' menyimpan ID pengguna yang sedang masuk
-    const userId = currentUser._id; 
+    // 1. Ambil nama user saat ini langsung dari Local Storage
+    const currentUsername = localStorage.getItem("chatUser"); 
+    
+    if (!currentUsername) {
+        alert("Sesi tidak valid, silakan login ulang.");
+        return;
+    }
+
     const inputNama = document.getElementById("input-new-username").value;
     const inputFoto = document.getElementById("input-new-photo").files[0];
 
     const formData = new FormData();
-    formData.append("userId", userId);
+    // 2. Kirim nama saat ini ke backend agar backend tahu siapa yang harus diupdate
+    formData.append("currentUsername", currentUsername);
     formData.append("newUsername", inputNama);
     if (inputFoto) {
         formData.append("profilePic", inputFoto);
@@ -488,9 +494,15 @@ async function simpanProfilBaru() {
         
         const hasil = await respons.json();
         if (hasil.success) {
-            // Perbarui data lokal jika diperlukan
-            if (inputNama) currentUser.username = inputNama;
-            if (hasil.user.profilePic) currentUser.profilePic = hasil.user.profilePic;
+            
+            // 3. PENTING: Jika nama berhasil diubah, update juga nama di Local Storage!
+            if (inputNama) {
+                localStorage.setItem("chatUser", inputNama);
+                
+                // (Opsional) Update sapaan di pojok kiri atas layar
+                const greeting = document.getElementById("userGreeting");
+                if (greeting) greeting.innerText = inputNama;
+            }
             
             alert("Profil berhasil diperbarui!");
             tutupModalProfil();

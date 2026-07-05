@@ -30,29 +30,31 @@ const io = new Server(server, {
 // Konfigurasi folder penyimpanan untuk profil (pastikan folder 'uploads' ada di dalam proyek Anda)
 const upload = multer({ dest: 'uploads/' });
 
-// Rute API untuk memperbarui profil
 app.post('/api/update-profile', upload.single('profilePic'), async (req, res) => {
     try {
-        const { userId, newUsername } = req.body;
+        // KITA UBAH: Tangkap currentUsername, bukan userId
+        const { currentUsername, newUsername } = req.body;
         let updateData = {};
         
         if (newUsername) {
             updateData.username = newUsername;
         }
 
-        // Jika ada foto baru yang diunggah
         if (req.file) {
             updateData.profilePic = `/uploads/${req.file.filename}`;
         }
 
-        // Perbarui data pengguna di MongoDB (Asumsi model bernama 'User')
-        const updatedUser = await User.findByIdAndUpdate(userId, updateData, { new: true });
+        // KITA UBAH: Cari pengguna berdasarkan 'username' lamanya
+        const updatedUser = await User.findOneAndUpdate(
+            { username: currentUsername }, 
+            updateData, 
+            { new: true }
+        );
 
         if (!updatedUser) {
             return res.status(404).json({ success: false, message: "Pengguna tidak ditemukan." });
         }
 
-        // Siarkan perubahan secara real-time ke seluruh jaringan (Broadcast via Redis/Socket.io)
         io.emit("user_profile_updated", {
             userId: updatedUser._id,
             username: updatedUser.username,
