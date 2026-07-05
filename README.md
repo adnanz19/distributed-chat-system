@@ -36,10 +36,8 @@
 
 ## Arsitektur Sistem
 
-```
 <img width="313" height="715" alt="architecture png" src="https://github.com/user-attachments/assets/dcdc6263-6394-4ac5-9ff8-bc824d46aef5" />
 
-```
 
 ---
 
@@ -110,7 +108,7 @@ cd distributed-chat-system
 
 ```bash
 cd backend
-npm install
+pnpm install
 ```
 
 Buat file **.env**
@@ -124,7 +122,7 @@ JWT_SECRET=your_secret_key
 Jalankan server
 
 ```bash
-npm run dev
+pnpm run dev
 ```
 
 atau
@@ -154,11 +152,23 @@ Lalu jalankan menggunakan Live Server atau deploy ke VPS.
 ---
 
 ## Screenshot
-**Tampilan awal login**
+**Tampilan Awal Login**
 <img width="1917" height="865" alt="Screenshot 2026-07-04 222415" src="https://github.com/user-attachments/assets/82384ba4-1420-403e-af1b-25796b5252ec" />
 
-**Tampilan chat**
-<img width="1917" height="867" alt="Screenshot 2026-07-04 223240" src="https://github.com/user-attachments/assets/cbaa8b4e-3976-4fde-8536-139e4ee3aa06" />
+**Tampilan Setelah Daftar dan Login Akun**
+<img width="1917" height="867" alt="Screenshot 2026-07-04 224007" src="https://github.com/user-attachments/assets/c8d65083-ef5d-4563-a9f0-0cb3b536313a" />
+
+**Tampilan Chat Awal**
+<img width="1917" height="867" alt="Screenshot 2026-07-04 224534" src="https://github.com/user-attachments/assets/caca33db-7905-4bd0-8b68-eb504d13a801" />
+
+**Tes Chat Global**
+<img width="1917" height="867" alt="Screenshot 2026-07-04 224127" src="https://github.com/user-attachments/assets/106cdf32-af76-4dee-87dc-bd5ace20adb5" />
+
+**Tes Upload Gambar**
+<img width="1917" height="867" alt="Screenshot 2026-07-04 230050" src="https://github.com/user-attachments/assets/d754c8ae-5bdb-49b0-9541-d41fe39cf77b" />
+
+**Tampilan Fitur Image Lightbox dan Terdapat Tombol Unduh**
+<img width="1917" height="865" alt="image" src="https://github.com/user-attachments/assets/4d03fa69-5bda-490a-8619-db781ab70551" />
 
 ---
 
