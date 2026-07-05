@@ -11,6 +11,7 @@ import { connectRedis } from './src/redis.js';
 import { setupSocket } from './src/socket.js';
 import authRoutes from './src/routes/authRoutes.js';
 import messageRoutes from './src/routes/messageoutes.js';
+import User from './src/models/User.js';
 import fs from 'fs';
 import multer from 'multer';
 
