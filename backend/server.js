@@ -12,10 +12,10 @@ import { setupSocket } from './src/socket.js';
 import authRoutes from './src/routes/authRoutes.js';
 import messageRoutes from './src/routes/messageoutes.js';
 import fs from 'fs';
+import multer from 'multer';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const multer = require('multer');
 
 const app = express();
 const server = http.createServer(app);
