@@ -12,7 +12,13 @@ const userSchema = new mongose.Schema({
         type : String,
         required : true,
         minlength : 8
+    },
+    // === INI TAMBAHANNYA ===
+    profilePic : {
+        type : String,
+        default : "" // Default kosong jika user belum pernah upload foto
     }
+    // =======================
 })
 
 userSchema.pre('save', async function () {
