@@ -61,7 +61,7 @@ app.post('/api/update-profile', upload.single('profilePic'), async (req, res) =>
         const updatedUser = await User.findOneAndUpdate(
             { username: currentUsername }, 
             updateData, 
-            { new: true }
+            { returnDocument: 'after' }
         );
 
         if (!updatedUser) {
