@@ -23,12 +23,23 @@ function getUsernameColor(username) {
 document.addEventListener("DOMContentLoaded", () => {
     const savedToken = localStorage.getItem('chatToken');
     const savedUser = localStorage.getItem('chatUser');
+    const savedPic = localStorage.getItem('chatProfilePic'); // <--- Menarik foto dari memori
     
     if (savedToken && savedUser) {
         currentUser = savedUser;
         document.getElementById('authPanel').style.display = 'none';
         document.getElementById('chatPanel').style.display = 'block';
         document.getElementById('userGreeting').innerText = `Halo, ${currentUser}`;
+        
+        // === KODE UNTUK MENAMPILKAN KEMBALI FOTO DI SIDEBAR ===
+        if (savedPic && savedPic !== "undefined" && savedPic !== "null") {
+            const kotakAvatar = document.querySelector(".profile-avatar");
+            if (kotakAvatar) {
+                kotakAvatar.innerHTML = `<img src="${savedPic}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+            }
+        }
+        // ======================================================
+
         connectSocket(savedToken);
         loadChatHistory();
         loadUserCount();
@@ -542,15 +553,5 @@ socket.on("user_profile_updated", (dataBaru) => {
         
         const greeting = document.getElementById("userGreeting");
         if (greeting) greeting.innerText = "Halo, " + dataBaru.username;
-    }
-});
-
-window.addEventListener('DOMContentLoaded', () => {
-    const savedPic = localStorage.getItem("chatProfilePic");
-    if (savedPic) {
-        const kotakAvatar = document.querySelector(".profile-avatar");
-        if (kotakAvatar) {
-            kotakAvatar.innerHTML = `<img src="${savedPic}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
-        }
     }
 });
