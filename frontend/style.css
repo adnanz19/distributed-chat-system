@@ -736,59 +736,81 @@ button:hover {
 }
 
 /* =========================================
-   TATA LETAK OBROLAN ALA WHATSAPP
+   PAKSA TATA LETAK OBROLAN ALA WHATSAPP
    ========================================= */
 
-/* Mengubah <li> menjadi kontainer Flexbox */
+/* 1. Paksa pesan menjadi sejajar ke samping (Flexbox) */
 #messages li {
-    display: flex;
-    align-items: flex-end; /* Avatar nempel di bagian bawah gelembung */
-    gap: 10px;
-    margin-bottom: 15px;
-    background: transparent !important; /* Hapus background bawaan li jika ada */
+    display: flex !important;
+    align-items: flex-end !important;
+    gap: 10px !important;
+    margin-bottom: 15px !important;
     padding: 0 !important;
+    background: transparent !important;
     border: none !important;
+    width: 100% !important;
+    box-shadow: none !important;
 }
 
 /* Pesan orang lain (kiri) */
 #messages li.other-message {
-    flex-direction: row; 
+    flex-direction: row !important;
+    justify-content: flex-start !important;
 }
 
 /* Pesan saya sendiri (kanan) */
 #messages li.my-message {
-    flex-direction: row-reverse; 
+    flex-direction: row-reverse !important;
+    justify-content: flex-start !important;
 }
 
-/* Desain Foto Profil Mini (Avatar) */
-.chat-avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    object-fit: cover;
-    flex-shrink: 0;
-    border: 1px solid #e5e7eb;
-    background: #f9fafb;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+/* 2. Paksa Avatar menjadi bulat, kecil, dan anti-gepeng */
+img.chat-avatar {
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    min-height: 36px !important;
+    max-width: 36px !important;
+    max-height: 36px !important;
+    border-radius: 50% !important;
+    object-fit: cover !important;
+    flex-shrink: 0 !important; /* Jangan mengecil walau teks panjang */
+    border: 1px solid #e5e7eb !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #f9fafb !important;
 }
 
-/* Pembungkus teks gelembung pesannya */
+/* 3. Paksa pembungkus teks menjadi gelembung */
 .message-bubble {
-    display: flex;
-    flex-direction: column;
-    max-width: 75%;
-    background: #fff;
-    padding: 12px 16px;
-    border-radius: 16px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    border: 1px solid #f3f4f6;
+    display: flex !important;
+    flex-direction: column !important;
+    max-width: 75% !important;
+    padding: 8px 14px !important;
+    border-radius: 12px !important;
+    background: #ffffff !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
 }
 
-/* Bikin ekor gelembung ala WhatsApp */
+/* Beri warna hijau khas WA untuk pesan sendiri */
 #messages li.my-message .message-bubble {
-    background: #dcf8c6; /* Warna hijau khas WhatsApp */
-    border-bottom-right-radius: 2px;
+    background: #dcf8c6 !important;
+    border-bottom-right-radius: 0px !important;
 }
+
+/* Beri ekor untuk pesan orang lain */
 #messages li.other-message .message-bubble {
-    border-bottom-left-radius: 2px;
+    border-bottom-left-radius: 0px !important;
+}
+
+/* Rapikan margin pada teks dan gambar di dalam gelembung */
+.message-bubble strong {
+    margin-bottom: 2px !important;
+    font-size: 0.9em !important;
+}
+.message-bubble .time-stamp {
+    font-size: 0.7em !important;
+    color: #6b7280 !important;
+    align-self: flex-end !important;
+    margin-top: 4px !important;
 }
