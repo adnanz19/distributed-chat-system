@@ -502,6 +502,12 @@ async function simpanProfilBaru() {
                 
                 const greeting = document.getElementById("userGreeting");
                 if (greeting) greeting.innerText = "Halo, " + inputNama; 
+                // === TAMBAHKAN KODE INI ===
+                // Putus koneksi lama dan sambung kembali dengan username baru
+                if (socket) {
+                    socket.disconnect();
+                    connectSocket(localStorage.getItem('chatToken'));
+                }
             }
             
             if (hasil.user.profilePic) {
