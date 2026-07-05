@@ -293,10 +293,11 @@ function connectSocket(token) {
 
 function sendMessage() {
     const input = document.getElementById('chatInput');
+    // Pastikan menggunakan currentUser yang sudah terupdate
     if (input.value.trim() && socket) {
         socket.emit('send_message', { 
             text: input.value,
-            username: currentUser,
+            username: currentUser, // Variabel ini sudah terupdate oleh simpanProfilBaru()
             profilePic: localStorage.getItem("chatProfilePic") 
         });
         input.value = '';
@@ -494,8 +495,11 @@ async function simpanProfilBaru() {
         
         const hasil = await respons.json();
         if (hasil.success) {
+            // TAMBAHKAN PEMBARUAN VARIABEL GLOBAL DI SINI
             if (inputNama) {
                 localStorage.setItem("chatUser", inputNama);
+                currentUser = inputNama; // <--- INI KUNCI UTAMANYA agar kirim pesan langsung pakai nama baru
+                
                 const greeting = document.getElementById("userGreeting");
                 if (greeting) greeting.innerText = "Halo, " + inputNama; 
             }
