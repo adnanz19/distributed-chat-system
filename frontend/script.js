@@ -49,7 +49,6 @@ async function handleAuth(endpoint) {
         return;
     }
 
-    // 2. FITUR ANTI-SPAM: Simpan tombol asli dan ganti jadi loading
     const originalBtnHTML = btnGroup.innerHTML;
     btnGroup.innerHTML = `<button disabled style="width: 100%; opacity: 0.7; cursor: not-allowed;">Memproses...</button>`;
     authMessage.innerText = "";
@@ -67,10 +66,24 @@ async function handleAuth(endpoint) {
         
         if (data.success) {
             if (endpoint === '/api/login') {
-                // Simpan token ke LocalStorage agar tidak hilang saat di-refresh
                 localStorage.setItem('chatToken', data.token);
                 localStorage.setItem('chatUser', data.username);
                 currentUser = data.username; 
+                
+                // === TAMBAHAN UNTUK MENANGKAP FOTO SAAT LOGIN ===
+                if (data.profilePic) {
+                    const fullImageUrl = BACKEND_URL + data.profilePic;
+                    localStorage.setItem("chatProfilePic", fullImageUrl);
+                    
+                    const kotakAvatar = document.querySelector(".profile-avatar");
+                    if (kotakAvatar) {
+                        kotakAvatar.innerHTML = `<img src="${fullImageUrl}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+                    }
+                } else {
+                    // Jika user memang belum punya foto, hapus sisa foto di memori
+                    localStorage.removeItem("chatProfilePic");
+                }
+                // ==================================================
                 
                 document.getElementById('authPanel').style.display = 'none';
                 document.getElementById('chatPanel').style.display = 'block';
@@ -81,13 +94,11 @@ async function handleAuth(endpoint) {
             } else {
                 authMessage.style.color = '#10b981'; 
                 authMessage.innerText = data.message || "Registrasi berhasil, silakan login.";
-                // Kembalikan tombol seperti semula setelah berhasil daftar
                 btnGroup.innerHTML = originalBtnHTML;
             }
         } else {
             authMessage.style.color = 'var(--error-color)';
             authMessage.innerText = data.message;
-            // Kembalikan tombol jika gagal login/daftar
             btnGroup.innerHTML = originalBtnHTML;
         }
     } catch (error) {
@@ -204,6 +215,7 @@ function confirmLogout() {
 function clearSession() {
     localStorage.removeItem('chatToken');
     localStorage.removeItem('chatUser');
+    localStorage.removeItem('chatProfilePic'); // <--- TAMBAHKAN BARIS INI
     location.reload();
 }
 
