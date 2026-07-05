@@ -43,21 +43,32 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+// Rute API untuk memperbarui profil
 app.post('/api/update-profile', upload.single('profilePic'), async (req, res) => {
     try {
-        // KITA UBAH: Tangkap currentUsername, bukan userId
         const { currentUsername, newUsername } = req.body;
         let updateData = {};
         
-        if (newUsername) {
+        // === PENGECEKAN NAMA PENGGUNA GANDA ===
+        if (newUsername && newUsername !== currentUsername) {
+            // Cek ke database apakah nama baru ini sudah dimiliki orang lain
+            const existingUser = await User.findOne({ username: newUsername });
+            if (existingUser) {
+                // Jika sudah ada, tolak dan kirim pesan error ke frontend
+                return res.status(400).json({ 
+                    success: false, 
+                    message: "Username sudah terpakai. Silakan gunakan nama lain." 
+                });
+            }
+            // Jika belum ada yang pakai, masukkan ke data yang akan diupdate
             updateData.username = newUsername;
         }
+        // =======================================
 
         if (req.file) {
             updateData.profilePic = `/uploads/${req.file.filename}`;
         }
 
-        // KITA UBAH: Cari pengguna berdasarkan 'username' lamanya
         const updatedUser = await User.findOneAndUpdate(
             { username: currentUsername }, 
             updateData, 
