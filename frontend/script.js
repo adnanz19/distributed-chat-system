@@ -442,3 +442,84 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 });
+
+
+// ==========================================
+// LOGIKA MODAL PROFIL
+// ==========================================
+
+// Fungsi membuka modal
+function bukaModalProfil() {
+    document.getElementById("modal-profil").style.display = "flex";
+    // Isi otomatis dengan nama yang sekarang
+    if (typeof currentUser !== 'undefined' && currentUser.username) {
+        document.getElementById("input-new-username").value = currentUser.username;
+    }
+}
+
+// Fungsi menutup modal
+function tutupModalProfil() {
+    document.getElementById("modal-profil").style.display = "none";
+}
+
+// Fungsi mengirim data ke server
+async function simpanProfilBaru() {
+    const tombolSimpan = document.querySelector(".btn-save");
+    tombolSimpan.innerText = "Menyimpan...";
+    tombolSimpan.disabled = true;
+
+    // Asumsi 'currentUser._id' menyimpan ID pengguna yang sedang masuk
+    const userId = currentUser._id; 
+    const inputNama = document.getElementById("input-new-username").value;
+    const inputFoto = document.getElementById("input-new-photo").files[0];
+
+    const formData = new FormData();
+    formData.append("userId", userId);
+    formData.append("newUsername", inputNama);
+    if (inputFoto) {
+        formData.append("profilePic", inputFoto);
+    }
+
+    try {
+        const respons = await fetch('/api/update-profile', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const hasil = await respons.json();
+        if (hasil.success) {
+            // Perbarui data lokal jika diperlukan
+            if (inputNama) currentUser.username = inputNama;
+            if (hasil.user.profilePic) currentUser.profilePic = hasil.user.profilePic;
+            
+            alert("Profil berhasil diperbarui!");
+            tutupModalProfil();
+        } else {
+            alert("Gagal: " + hasil.message);
+        }
+    } catch (error) {
+        console.error("Gagal menyimpan profil:", error);
+        alert("Terjadi kesalahan pada jaringan.");
+    } finally {
+        tombolSimpan.innerText = "Simpan Perubahan";
+        tombolSimpan.disabled = false;
+    }
+}
+
+// ==========================================
+// PENDENGAR PERUBAHAN REAL-TIME (SOCKET)
+// ==========================================
+
+socket.on("user_profile_updated", (dataBaru) => {
+    // Ubah semua foto avatar milik user ini yang ada di layar
+    const semuaAvatar = document.querySelectorAll(`.avatar-user-${dataBaru.userId}`);
+    semuaAvatar.forEach(img => {
+        img.src = dataBaru.profilePic;
+    });
+
+    // Ubah semua nama milik user ini yang ada di layar
+    const semuaNama = document.querySelectorAll(`.nama-user-${dataBaru.userId}`);
+    semuaNama.forEach(span => {
+        span.innerText = dataBaru.username;
+    });
+});
