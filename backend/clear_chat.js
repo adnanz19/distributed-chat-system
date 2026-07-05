@@ -1,7 +1,10 @@
-require('dotenv').config();
-const mongoose = require('mongoose');
+import dotenv from 'dotenv';
+import mongoose from 'mongoose';
 
-// Pastikan nama ini sesuai dengan nama koleksi di MongoDB Anda (biasanya 'messages' atau 'chats')
+// Memuat variabel dari file .env
+dotenv.config();
+
+// Pastikan nama ini sesuai dengan koleksi di database Anda (misal: 'messages')
 const namaKoleksi = 'messages'; 
 
 async function eksekusiPembersihan() {
