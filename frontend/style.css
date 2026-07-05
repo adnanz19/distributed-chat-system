@@ -734,3 +734,61 @@ button:hover {
     box-shadow: 0 4px 15px rgba(0, 123, 255, 0.4);
     transform: translateY(-2px);
 }
+
+/* =========================================
+   TATA LETAK OBROLAN ALA WHATSAPP
+   ========================================= */
+
+/* Mengubah <li> menjadi kontainer Flexbox */
+#messages li {
+    display: flex;
+    align-items: flex-end; /* Avatar nempel di bagian bawah gelembung */
+    gap: 10px;
+    margin-bottom: 15px;
+    background: transparent !important; /* Hapus background bawaan li jika ada */
+    padding: 0 !important;
+    border: none !important;
+}
+
+/* Pesan orang lain (kiri) */
+#messages li.other-message {
+    flex-direction: row; 
+}
+
+/* Pesan saya sendiri (kanan) */
+#messages li.my-message {
+    flex-direction: row-reverse; 
+}
+
+/* Desain Foto Profil Mini (Avatar) */
+.chat-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 1px solid #e5e7eb;
+    background: #f9fafb;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* Pembungkus teks gelembung pesannya */
+.message-bubble {
+    display: flex;
+    flex-direction: column;
+    max-width: 75%;
+    background: #fff;
+    padding: 12px 16px;
+    border-radius: 16px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    border: 1px solid #f3f4f6;
+}
+
+/* Bikin ekor gelembung ala WhatsApp */
+#messages li.my-message .message-bubble {
+    background: #dcf8c6; /* Warna hijau khas WhatsApp */
+    border-bottom-right-radius: 2px;
+}
+#messages li.other-message .message-bubble {
+    border-bottom-left-radius: 2px;
+}
