@@ -11,7 +11,9 @@ import { connectRedis } from './src/redis.js';
 import { setupSocket } from './src/socket.js';
 import authRoutes from './src/routes/authRoutes.js';
 import messageRoutes from './src/routes/messageoutes.js';
+import User from './src/models/User.js';
 import fs from 'fs';
+import multer from 'multer';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -22,6 +24,71 @@ const io = new Server(server, {
     cors: {
         origin: "*", // Mengizinkan semua frontend terhubung
         methods: ["GET", "POST"]
+    }
+});
+
+// Konfigurasi Multer yang benar untuk mempertahankan ekstensi gambar (.jpg/.png)
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/');
+    },
+    filename: function (req, file, cb) {
+        // Ambil ekstensi file aslinya (misal: .jpg)
+        const ext = path.extname(file.originalname);
+        // Buat nama unik ditambah dengan ekstensi aslinya
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, file.fieldname + '-' + uniqueSuffix + ext);
+    }
+});
+
+const upload = multer({ storage: storage });
+
+// Rute API untuk memperbarui profil
+app.post('/api/update-profile', upload.single('profilePic'), async (req, res) => {
+    try {
+        const { currentUsername, newUsername } = req.body;
+        let updateData = {};
+        
+        // === PENGECEKAN NAMA PENGGUNA GANDA ===
+        if (newUsername && newUsername !== currentUsername) {
+            // Cek ke database apakah nama baru ini sudah dimiliki orang lain
+            const existingUser = await User.findOne({ username: newUsername });
+            if (existingUser) {
+                // Jika sudah ada, tolak dan kirim pesan error ke frontend
+                return res.status(400).json({ 
+                    success: false, 
+                    message: "Username sudah terpakai. Silakan gunakan nama lain." 
+                });
+            }
+            // Jika belum ada yang pakai, masukkan ke data yang akan diupdate
+            updateData.username = newUsername;
+        }
+        // =======================================
+
+        if (req.file) {
+            updateData.profilePic = `/uploads/${req.file.filename}`;
+        }
+
+        const updatedUser = await User.findOneAndUpdate(
+            { username: currentUsername }, 
+            updateData, 
+            { returnDocument: 'after' }
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ success: false, message: "Pengguna tidak ditemukan." });
+        }
+
+        io.emit("user_profile_updated", {
+            userId: updatedUser._id,
+            username: updatedUser.username,
+            profilePic: updatedUser.profilePic
+        });
+
+        res.json({ success: true, message: "Profil berhasil diperbarui", user: updatedUser });
+    } catch (error) {
+        console.error("Gagal memperbarui profil:", error);
+        res.status(500).json({ success: false, message: "Terjadi kesalahan pada peladen." });
     }
 });
 

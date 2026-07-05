@@ -16,27 +16,31 @@ export const setupSocket = (io) => {
 
         socket.on('send_message', async (data) => {
             try {
-                const userValid = await User.findOne({ username: socket.user.username });
+                // === PERUBAHAN UTAMA DI SINI ===
+                // Cari user berdasarkan ID (dari socket.user), bukan username
+                // Pastikan authMiddleware Anda sudah memasukkan 'id' ke dalam socket.user
+                const userValid = await User.findById(socket.user.id); 
                 
                 if (!userValid) {
                     console.error('❌ User tidak ditemukan di database saat mengirim pesan');
                     return;
                 }
 
-                // 1. Simpan gambar ke MongoDB
+                // 1. Simpan pesan ke MongoDB menggunakan ID
                 const newMessage = new Message({
                     sender: userValid._id, 
                     text: data.text,
-                    imageUrl: data.imageUrl, // <--- TAMBAHAN UNTUK GAMBAR
+                    imageUrl: data.imageUrl, 
                     serverPort: process.env.PORT || 3001
                 });
                 await newMessage.save();
 
-                // 2. Kirim gambar ke Redis untuk disiarkan ke semua layar
+                // 2. Kirim ke Redis
                 const payload = {
-                    username: socket.user.username,
+                    username: userValid.username, // Gunakan username terbaru dari DB
                     text: data.text,
-                    imageUrl: data.imageUrl, // <--- TAMBAHAN UNTUK GAMBAR
+                    imageUrl: data.imageUrl,
+                    profilePic: userValid.profilePic, // Kirim foto profil terbaru
                     server: process.env.PORT || 3001,
                     timestamp: newMessage.createdAt
                 };

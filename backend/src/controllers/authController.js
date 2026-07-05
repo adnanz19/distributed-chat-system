@@ -59,7 +59,16 @@ export const login = async (req, res) => {
         if (!isMatch) return res.status(401).json({ success: false, message: 'Password salah' });
 
         const token = jwt.sign({ id: user._id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '1d' });
-        res.status(200).json({ success: true, token, username: user.username });
+        
+        // === BARIS INI YANG KITA UBAH ===
+        // Kita tambahkan profilePic agar dikirim ke frontend saat berhasil login
+        res.status(200).json({ 
+            success: true, 
+            token, 
+            username: user.username,
+            profilePic: user.profilePic // <--- INI TAMBAHANNYA
+        });
+        // ================================
         
     } catch (error) {
         console.error("\n=== DETAIL ERROR LOGIN ===");

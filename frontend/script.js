@@ -10,9 +10,7 @@ const userColors = [
 ];
 
 function getUsernameColor(username) {
-    // Pertahanan: Jika username kosong/undefined, gunakan nama "Anonim"
     const safeName = username || "Anonim"; 
-    
     let hash = 0;
     for (let i = 0; i < safeName.length; i++) {
         hash = safeName.charCodeAt(i) + ((hash << 5) - hash);
@@ -21,16 +19,27 @@ function getUsernameColor(username) {
     return userColors[index];
 }
 
-// 1. FITUR AUTO-LOGIN: Cek apakah user sudah login sebelumnya
+// 1. FITUR AUTO-LOGIN
 document.addEventListener("DOMContentLoaded", () => {
     const savedToken = localStorage.getItem('chatToken');
     const savedUser = localStorage.getItem('chatUser');
+    const savedPic = localStorage.getItem('chatProfilePic'); // <--- Menarik foto dari memori
     
     if (savedToken && savedUser) {
         currentUser = savedUser;
         document.getElementById('authPanel').style.display = 'none';
         document.getElementById('chatPanel').style.display = 'block';
         document.getElementById('userGreeting').innerText = `Halo, ${currentUser}`;
+        
+        // === KODE UNTUK MENAMPILKAN KEMBALI FOTO DI SIDEBAR ===
+        if (savedPic && savedPic !== "undefined" && savedPic !== "null") {
+            const kotakAvatar = document.querySelector(".profile-avatar");
+            if (kotakAvatar) {
+                kotakAvatar.innerHTML = `<img src="${savedPic}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+            }
+        }
+        // ======================================================
+
         connectSocket(savedToken);
         loadChatHistory();
         loadUserCount();
@@ -49,7 +58,6 @@ async function handleAuth(endpoint) {
         return;
     }
 
-    // 2. FITUR ANTI-SPAM: Simpan tombol asli dan ganti jadi loading
     const originalBtnHTML = btnGroup.innerHTML;
     btnGroup.innerHTML = `<button disabled style="width: 100%; opacity: 0.7; cursor: not-allowed;">Memproses...</button>`;
     authMessage.innerText = "";
@@ -67,10 +75,21 @@ async function handleAuth(endpoint) {
         
         if (data.success) {
             if (endpoint === '/api/login') {
-                // Simpan token ke LocalStorage agar tidak hilang saat di-refresh
                 localStorage.setItem('chatToken', data.token);
                 localStorage.setItem('chatUser', data.username);
                 currentUser = data.username; 
+                
+                if (data.profilePic) {
+                    const fullImageUrl = BACKEND_URL + data.profilePic;
+                    localStorage.setItem("chatProfilePic", fullImageUrl);
+                    
+                    const kotakAvatar = document.querySelector(".profile-avatar");
+                    if (kotakAvatar) {
+                        kotakAvatar.innerHTML = `<img src="${fullImageUrl}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+                    }
+                } else {
+                    localStorage.removeItem("chatProfilePic");
+                }
                 
                 document.getElementById('authPanel').style.display = 'none';
                 document.getElementById('chatPanel').style.display = 'block';
@@ -81,13 +100,11 @@ async function handleAuth(endpoint) {
             } else {
                 authMessage.style.color = '#10b981'; 
                 authMessage.innerText = data.message || "Registrasi berhasil, silakan login.";
-                // Kembalikan tombol seperti semula setelah berhasil daftar
                 btnGroup.innerHTML = originalBtnHTML;
             }
         } else {
             authMessage.style.color = 'var(--error-color)';
             authMessage.innerText = data.message;
-            // Kembalikan tombol jika gagal login/daftar
             btnGroup.innerHTML = originalBtnHTML;
         }
     } catch (error) {
@@ -98,13 +115,11 @@ async function handleAuth(endpoint) {
     }
 }
 
-// --- FUNGSI MENARIK RIWAYAT CHAT (DIPERBARUI DENGAN TOKEN) ---
+// --- FUNGSI MENARIK RIWAYAT CHAT ---
 async function loadChatHistory() {
     try {
-        // Ambil token dari memori browser
         const token = localStorage.getItem('chatToken');
         
-        // Bawa token tersebut di dalam 'headers'
         const res = await fetch(BACKEND_URL + '/api/messages', {
             method: 'GET',
             headers: {
@@ -117,9 +132,8 @@ async function loadChatHistory() {
         const historyData = await res.json();
         
         const messages = document.getElementById('messages');
-        messages.innerHTML = ''; // Bersihkan layar sebelum memuat ulang
+        messages.innerHTML = ''; 
         
-        // Pastikan historyData adalah array sebelum di-loop
         if (Array.isArray(historyData)) {
             historyData.forEach(data => {
                 const li = document.createElement('li');
@@ -128,7 +142,6 @@ async function loadChatHistory() {
                 
                 const dateObj = new Date(data.createdAt || Date.now());
                 const timeString = dateObj.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-                
                 const nameStyle = isMyMessage ? '' : `style="color: ${getUsernameColor(data.username)};"`;
 
                 let imageHTML = '';
@@ -136,18 +149,33 @@ async function loadChatHistory() {
                     imageHTML = `<br><img src="${data.imageUrl}" onclick="openImageModal(this.src)" style="max-width: 250px; border-radius: 8px; margin-top: 8px; border: 1px solid #e5e7eb; cursor: pointer;" title="Klik untuk memperbesar">`;
                 }
 
+                // Setup Avatar
+                const defaultAvatar = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='12' cy='7' r='4'/%3E%3C/svg%3E";
+                let finalAvatarUrl = defaultAvatar;
+                
+                if (data.profilePic) {
+                    finalAvatarUrl = data.profilePic.startsWith('http') ? data.profilePic : BACKEND_URL + data.profilePic;
+                }
+                // Paksa pakai avatar dari localStorage jika ini pesan kita agar perubahannya instan
+                if (isMyMessage && localStorage.getItem("chatProfilePic")) {
+                    finalAvatarUrl = localStorage.getItem("chatProfilePic");
+                }
+
+                // 3. FITUR TATA LETAK WHATSAPP
                 li.innerHTML = `
-                    <strong ${nameStyle}>${data.username}</strong> 
-                    <span class="message-text"></span>
-                    ${imageHTML}
-                    <span class="time-stamp">${timeString}</span>
+                    <img src="${finalAvatarUrl}" class="chat-avatar avatar-user-${data.username}" alt="Avatar">
+                    <div class="message-bubble">
+                        <strong ${nameStyle}>${data.username}</strong> 
+                        <span class="message-text"></span>
+                        ${imageHTML}
+                        <span class="time-stamp">${timeString}</span>
+                    </div>
                 `;
                 
                 li.querySelector('.message-text').textContent = data.text;
                 messages.appendChild(li);
             });
             
-            // Otomatis gulir ke pesan paling bawah
             messages.scrollTop = messages.scrollHeight;
         } else {
             console.error("Data riwayat tidak valid:", historyData);
@@ -173,11 +201,12 @@ async function uploadImage() {
         const data = await res.json();
         
         if (data.imageUrl) {
-            // Minta socket mengirimkan gambar ke obrolan global
+            // Minta socket mengirimkan gambar dan foto profil ke obrolan global
             socket.emit('send_message', { 
                 text: '', 
                 username: currentUser,
-                imageUrl: BACKEND_URL + data.imageUrl 
+                imageUrl: BACKEND_URL + data.imageUrl,
+                profilePic: localStorage.getItem("chatProfilePic")
             });
         }
     } catch (err) {
@@ -200,10 +229,10 @@ function confirmLogout() {
     clearSession();
 }
 
-// Logout paksa (dipakai saat token invalid/expired, tanpa dialog)
 function clearSession() {
     localStorage.removeItem('chatToken');
     localStorage.removeItem('chatUser');
+    localStorage.removeItem('chatProfilePic'); 
     location.reload();
 }
 
@@ -223,22 +252,33 @@ function connectSocket(token) {
         const timeString = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
         const nameStyle = isMyMessage ? '' : `style="color: ${getUsernameColor(data.username)};"`;
 
-        // --- FITUR GAMBAR DITAMBAHKAN DI SINI ---
         let imageHTML = '';
         if (data.imageUrl) {
             imageHTML = `<br><img src="${data.imageUrl}" onclick="openImageModal(this.src)" style="max-width: 250px; border-radius: 8px; margin-top: 8px; border: 1px solid #e5e7eb; cursor: pointer;" title="Klik untuk memperbesar">`;
         }
 
-        // 3. FITUR ANTI-XSS: Kerangka HTML dipisah dari teks input user
-        li.innerHTML = `
-            <strong ${nameStyle}>${data.username}</strong> 
-            <span class="message-text"></span>
-            ${imageHTML}
-            <span class="time-stamp">${timeString}</span>
-        `;
-        // ----------------------------------------
+        // Setup Avatar untuk pesan yang baru masuk
+        const defaultAvatar = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='12' cy='7' r='4'/%3E%3C/svg%3E";
+        let finalAvatarUrl = defaultAvatar;
         
-        // Memasukkan pesan dengan textContent (mengubah script jahat menjadi teks biasa)
+        if (data.profilePic) {
+            finalAvatarUrl = data.profilePic.startsWith('http') ? data.profilePic : BACKEND_URL + data.profilePic;
+        }
+        if (isMyMessage && localStorage.getItem("chatProfilePic")) {
+            finalAvatarUrl = localStorage.getItem("chatProfilePic");
+        }
+
+        // 3. FITUR TATA LETAK WHATSAPP
+        li.innerHTML = `
+            <img src="${finalAvatarUrl}" class="chat-avatar avatar-user-${data.username}" alt="Avatar">
+            <div class="message-bubble">
+                <strong ${nameStyle}>${data.username}</strong> 
+                <span class="message-text"></span>
+                ${imageHTML}
+                <span class="time-stamp">${timeString}</span>
+            </div>
+        `;
+        
         li.querySelector('.message-text').textContent = data.text || '';
         
         messages.appendChild(li);
@@ -253,11 +293,12 @@ function connectSocket(token) {
 
 function sendMessage() {
     const input = document.getElementById('chatInput');
+    // Pastikan menggunakan currentUser yang sudah terupdate
     if (input.value.trim() && socket) {
-        // Tambahkan username ke dalam payload yang dikirim
         socket.emit('send_message', { 
             text: input.value,
-            username: currentUser 
+            username: currentUser, // Variabel ini sudah terupdate oleh simpanProfilBaru()
+            profilePic: localStorage.getItem("chatProfilePic") 
         });
         input.value = '';
     }
@@ -269,7 +310,6 @@ async function loadUserCount() {
         const data = await res.json();
         
         if (data.success) {
-            // Mengubah teks dari "1 Online" menjadi total user terdaftar
             document.getElementById('onlineCount').innerText = `${data.count} Terdaftar`;
         }
     } catch (error) {
@@ -303,63 +343,37 @@ function updateClock() {
 updateClock();
 setInterval(updateClock, 1000);
 
-// --- Interaksi tambahan untuk modal logout ---
-document.addEventListener('click', (e) => {
-    const modal = document.getElementById('logoutModal');
-    if (e.target === modal) hideLogoutConfirm();
-});
-
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') hideLogoutConfirm();
-});
-
-
-// --- FUNGSI ZOOM GAMBAR + SETUP DOWNLOAD ---
 // --- FUNGSI ZOOM GAMBAR ---
 function openImageModal(imgSrc) {
     const modal = document.getElementById('imageModal');
     const expandedImg = document.getElementById('expandedImg');
-    
-    // Set sumber gambar untuk tampilan zoom
     expandedImg.src = imgSrc;
-    
-    // Tampilkan modal (pastikan ini sesuai dengan CSS Anda, block atau flex)
     modal.style.display = 'flex'; 
 }
 
 function closeImageModal() {
     const modal = document.getElementById('imageModal');
-    // Sembunyikan modal
     modal.style.display = 'none';
 }
 
-
-// --- FUNGSI UNDUH PAKSA (MENGATASI MASALAH .HTM & REDIRECT) ---
 async function forceDownload(event) {
-    event.preventDefault();  // KUNCI UTAMA: Mencegah browser pindah halaman (redirect)
-    event.stopPropagation(); // Mencegah modal tertutup saat tombol diklik
+    event.preventDefault();  
+    event.stopPropagation(); 
     
     const imgSrc = document.getElementById('expandedImg').src;
     if (!imgSrc) return;
 
     try {
-        // 1. Ambil data mentah gambar dari server (Blob)
         const response = await fetch(imgSrc);
         const blob = await response.blob();
-        
-        // 2. Buat URL lokal sementara di dalam memori browser
         const url = window.URL.createObjectURL(blob);
-        
-        // 3. Buat elemen link "siluman" untuk memicu unduhan
         const a = document.createElement('a');
         a.style.display = 'none';
         a.href = url;
         
-        // Ekstrak nama asli file dari URL, atau gunakan nama default
         const filename = imgSrc.split('/').pop() || 'gambar_obrolan.jpg';
         a.download = filename;
         
-        // 4. Klik link siluman tersebut lalu hancurkan
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
@@ -375,7 +389,6 @@ async function forceDownload(event) {
 document.addEventListener("DOMContentLoaded", () => {
     const chatPanel = document.getElementById('chatPanel');
 
-    // 1. Mencegat sifat bawaan browser agar tidak membuka gambar di tab baru
     ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
         chatPanel.addEventListener(eventName, preventDefaults, false);
     });
@@ -385,21 +398,18 @@ document.addEventListener("DOMContentLoaded", () => {
         e.stopPropagation();
     }
 
-    // 2. Menambahkan efek visual saat gambar diseret masuk
     ['dragenter', 'dragover'].forEach(eventName => {
         chatPanel.addEventListener(eventName, () => {
             chatPanel.classList.add('drag-active');
         }, false);
     });
 
-    // 3. Menghapus efek visual saat gambar diseret keluar atau dilepas
     ['dragleave', 'drop'].forEach(eventName => {
         chatPanel.addEventListener(eventName, () => {
             chatPanel.classList.remove('drag-active');
         }, false);
     });
 
-    // 4. Menangkap gambar yang dilepas dan langsung mengunggahnya
     chatPanel.addEventListener('drop', handleDrop, false);
 
     async function handleDrop(e) {
@@ -409,18 +419,15 @@ document.addEventListener("DOMContentLoaded", () => {
         if (files && files.length > 0) {
             const file = files[0];
             
-            // Validasi: Pastikan yang diseret adalah file gambar
             if (!file.type.startsWith('image/')) {
                 alert('Tolong seret dan lepas file gambar saja (JPG/PNG/GIF).');
                 return;
             }
 
-            // Membungkus file dalam format yang dikenali server (seperti form-data)
             const formData = new FormData();
             formData.append('image', file);
 
             try {
-                // Mengirim ke API Upload Anda yang sudah ada
                 const res = await fetch(BACKEND_URL + '/api/messages/upload', {
                     method: 'POST',
                     body: formData
@@ -428,11 +435,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 const data = await res.json();
                 
                 if (data.imageUrl) {
-                    // Minta socket mengirimkan gambar ke obrolan global
                     socket.emit('send_message', { 
                         text: '', 
                         username: currentUser,
-                        imageUrl: BACKEND_URL + data.imageUrl 
+                        imageUrl: BACKEND_URL + data.imageUrl,
+                        profilePic: localStorage.getItem("chatProfilePic")
                     });
                 }
             } catch (err) {
@@ -440,5 +447,121 @@ document.addEventListener("DOMContentLoaded", () => {
                 alert("Gagal mengirim gambar. Periksa koneksi ke server.");
             }
         }
+    }
+});
+
+// ==========================================
+// LOGIKA MODAL PROFIL
+// ==========================================
+function bukaModalProfil() {
+    document.getElementById("modal-profil").style.display = "flex";
+    if (typeof currentUser !== 'undefined' && currentUser.username) {
+        document.getElementById("input-new-username").value = currentUser.username;
+    }
+}
+
+function tutupModalProfil() {
+    document.getElementById("modal-profil").style.display = "none";
+}
+
+async function simpanProfilBaru() {
+    const tombolSimpan = document.querySelector(".btn-save");
+    tombolSimpan.innerText = "Menyimpan...";
+    tombolSimpan.disabled = true;
+
+    const currentUsername = localStorage.getItem("chatUser"); 
+    
+    if (!currentUsername) {
+        alert("Sesi tidak valid, silakan login ulang.");
+        return;
+    }
+
+    const inputNama = document.getElementById("input-new-username").value;
+    const inputFoto = document.getElementById("input-new-photo").files[0];
+
+    const formData = new FormData();
+    formData.append("currentUsername", currentUsername);
+    formData.append("newUsername", inputNama);
+    if (inputFoto) {
+        formData.append("profilePic", inputFoto);
+    }
+
+    try {
+        // Karena API dan Frontend ada di domain yang sama (berdasarkan setup Anda sebelumnya)
+        const respons = await fetch('/api/update-profile', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const hasil = await respons.json();
+        if (hasil.success) {
+            // TAMBAHKAN PEMBARUAN VARIABEL GLOBAL DI SINI
+            if (inputNama) {
+                localStorage.setItem("chatUser", inputNama);
+                currentUser = inputNama; // <--- INI KUNCI UTAMANYA agar kirim pesan langsung pakai nama baru
+                
+                const greeting = document.getElementById("userGreeting");
+                if (greeting) greeting.innerText = "Halo, " + inputNama; 
+                // === TAMBAHKAN KODE INI ===
+                // Putus koneksi lama dan sambung kembali dengan username baru
+                if (socket) {
+                    socket.disconnect();
+                    connectSocket(localStorage.getItem('chatToken'));
+                }
+            }
+            
+            if (hasil.user.profilePic) {
+                const fullImageUrl = BACKEND_URL + hasil.user.profilePic;
+                localStorage.setItem("chatProfilePic", fullImageUrl);
+                
+                const kotakAvatar = document.querySelector(".profile-avatar");
+                if (kotakAvatar) {
+                    kotakAvatar.innerHTML = `<img src="${fullImageUrl}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+                }
+            }
+            
+            alert("Profil berhasil diperbarui!");
+            tutupModalProfil();
+        } else {
+            alert("Gagal: " + hasil.message);
+        }
+    } catch (error) {
+        console.error("Gagal menyimpan profil:", error);
+        alert("Terjadi kesalahan pada jaringan.");
+    } finally {
+        tombolSimpan.innerText = "Simpan Perubahan";
+        tombolSimpan.disabled = false;
+    }
+}
+
+// ==========================================
+// PENDENGAR PERUBAHAN REAL-TIME (SOCKET)
+// ==========================================
+// TYPO ssocket TELAH DIPERBAIKI MENJADI socket
+socket.on("user_profile_updated", (dataBaru) => {
+    const fullImageUrl = BACKEND_URL + dataBaru.profilePic;
+
+    // Targetkan menggunakan class berdasarkan username
+    const semuaAvatar = document.querySelectorAll(`.avatar-user-${dataBaru.username}`);
+    semuaAvatar.forEach(img => {
+        img.src = fullImageUrl; 
+    });
+
+    const semuaNama = document.querySelectorAll(`.nama-user-${dataBaru.username}`);
+    semuaNama.forEach(span => {
+        span.innerText = dataBaru.username;
+    });
+
+    const namaSayaSaatIni = localStorage.getItem("chatUser");
+    if (dataBaru.username === namaSayaSaatIni) {
+        localStorage.setItem("chatProfilePic", fullImageUrl);
+
+        const kotakAvatar = document.querySelector(".profile-avatar");
+        if (kotakAvatar) {
+            kotakAvatar.innerHTML = `<img src="${fullImageUrl}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+        }
+        
+        const greeting = document.getElementById("userGreeting");
+        if (greeting) greeting.innerText = "Halo, " + dataBaru.username;
     }
 });
