@@ -27,8 +27,21 @@ const io = new Server(server, {
     }
 });
 
-// Konfigurasi folder penyimpanan untuk profil (pastikan folder 'uploads' ada di dalam proyek Anda)
-const upload = multer({ dest: 'uploads/' });
+// Konfigurasi Multer yang benar untuk mempertahankan ekstensi gambar (.jpg/.png)
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/');
+    },
+    filename: function (req, file, cb) {
+        // Ambil ekstensi file aslinya (misal: .jpg)
+        const ext = path.extname(file.originalname);
+        // Buat nama unik ditambah dengan ekstensi aslinya
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, file.fieldname + '-' + uniqueSuffix + ext);
+    }
+});
+
+const upload = multer({ storage: storage });
 
 app.post('/api/update-profile', upload.single('profilePic'), async (req, res) => {
     try {

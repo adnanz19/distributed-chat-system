@@ -506,9 +506,16 @@ async function simpanProfilBaru() {
             // === TAMBAHKAN BLOK KODE INI ===
             // Ganti ikon SVG di sidebar kiri dengan foto yang baru diupload
             if (hasil.user.profilePic) {
+                // Buat URL absolut
+                const fullImageUrl = BACKEND_URL + hasil.user.profilePic;
+
+                // Simpan URL absolut ke Local Storage
+                localStorage.setItem("chatProfilePic", fullImageUrl);
+                
                 const kotakAvatar = document.querySelector(".profile-avatar");
                 if (kotakAvatar) {
-                    kotakAvatar.innerHTML = `<img src="${hasil.user.profilePic}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+                    // Gunakan URL absolut
+                    kotakAvatar.innerHTML = `<img src="${fullImageUrl}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
                 }
             }
             // ===============================
@@ -531,11 +538,14 @@ async function simpanProfilBaru() {
 // PENDENGAR PERUBAHAN REAL-TIME (SOCKET)
 // ==========================================
 
-socket.on("user_profile_updated", (dataBaru) => {
-    // 1. Ubah avatar di balon chat (Kode Anda yang sudah ada)
+ssocket.on("user_profile_updated", (dataBaru) => {
+    // Buat URL absolut dari data yang diterima
+    const fullImageUrl = BACKEND_URL + dataBaru.profilePic;
+
+    // 1. Ubah avatar di balon chat
     const semuaAvatar = document.querySelectorAll(`.avatar-user-${dataBaru.userId}`);
     semuaAvatar.forEach(img => {
-        img.src = dataBaru.profilePic;
+        img.src = fullImageUrl; // Gunakan URL absolut
     });
 
     const semuaNama = document.querySelectorAll(`.nama-user-${dataBaru.userId}`);
@@ -543,17 +553,29 @@ socket.on("user_profile_updated", (dataBaru) => {
         span.innerText = dataBaru.username;
     });
 
-    // === TAMBAHKAN BLOK KODE INI ===
-    // 2. Jika yang update profil adalah akun kita sendiri, ganti juga foto di sidebar kiri
+    // 2. Jika yang update profil adalah akun kita sendiri
     const namaSayaSaatIni = localStorage.getItem("chatUser");
     if (dataBaru.username === namaSayaSaatIni) {
+        // Simpan URL absolut jika ini akun kita
+        localStorage.setItem("chatProfilePic", fullImageUrl);
+
         const kotakAvatar = document.querySelector(".profile-avatar");
         if (kotakAvatar) {
-            kotakAvatar.innerHTML = `<img src="${dataBaru.profilePic}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+            kotakAvatar.innerHTML = `<img src="${fullImageUrl}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
         }
         
         const greeting = document.getElementById("userGreeting");
         if (greeting) greeting.innerText = "Halo, " + dataBaru.username;
     }
-    // ===============================
+});
+
+// Fungsi otomatis berjalan saat halaman web pertama kali dibuka / direfresh
+window.addEventListener('DOMContentLoaded', () => {
+    const savedPic = localStorage.getItem("chatProfilePic");
+    if (savedPic) {
+        const kotakAvatar = document.querySelector(".profile-avatar");
+        if (kotakAvatar) {
+            kotakAvatar.innerHTML = `<img src="${savedPic}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+        }
+    }
 });
